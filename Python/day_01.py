@@ -4,13 +4,7 @@ from aoc import get_lines
 
 
 def parse_input(lines):
-    one = []
-    two = []
-    for line in lines:
-        o, t = line.split()
-        one.append(int(o))
-        two.append(int(t))
-    return one, two
+    return tuple(zip(*list((map(int, line.split(maxsplit=2)) for line in lines))))
 
 
 def part_1(one, two):
