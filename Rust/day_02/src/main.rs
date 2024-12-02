@@ -11,8 +11,7 @@ pub fn skip_nth<'a, I>(iter: I, n: usize) -> impl Iterator<Item = &'a i32>
 where
     I: Iterator<Item = &'a i32>,
 {
-    iter.into_iter()
-        .enumerate()
+    iter.enumerate()
         .filter_map(move |(index, item)| if index == n { None } else { Some(item) })
 }
 
