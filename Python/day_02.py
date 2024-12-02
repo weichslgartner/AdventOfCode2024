@@ -19,10 +19,7 @@ def adjacent_difference(level: List[int]) -> List[int]:
 
 
 def damp(level: List[int]) -> bool:
-    for i in range(len(level)):
-        if safe(adjacent_difference(level[:i] + level[i + 1:])):
-            return True
-    return False
+    return any(safe(adjacent_difference(level[:i] + level[i + 1:])) for i in range(len(level)))
 
 
 def part_1(levels: List[List[int]]) -> int:
