@@ -5,7 +5,7 @@ from aoc import get_lines
 
 
 def parse_input(lines: List[str]) -> (List[int], List[int]):
-    return tuple(zip(*list((map(int, line.split()) for line in lines))))
+    return zip(*(map(int, line.split()) for line in lines))
 
 
 def part_1(one: List[int], two: List[int]) -> int:
