@@ -1,17 +1,18 @@
 from collections import Counter
+from typing import List
 
 from aoc import get_lines
 
 
-def parse_input(lines):
-    return tuple(zip(*list((map(int, line.split(maxsplit=2)) for line in lines))))
+def parse_input(lines: List[str]) -> (List[int], List[int]):
+    return tuple(zip(*list((map(int, line.split()) for line in lines))))
 
 
-def part_1(one, two):
+def part_1(one: List[int], two: List[int]) -> int:
     return sum(abs(o - t) for o, t in zip(sorted(one), sorted(two)))
 
 
-def part_2(one, two):
+def part_2(one: List[int], two: List[int]) -> int:
     cnt = Counter(two)
     return sum(i * cnt[i] for i in one)
 

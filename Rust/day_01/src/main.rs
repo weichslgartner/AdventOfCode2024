@@ -7,7 +7,7 @@ fn parse_input(input: &str) -> Result<(Vec<i64>, Vec<i64>)> {
         .map(|s| s.split_whitespace())
         .filter_map(|val| {
             val.take(2)
-                .map(|x| x.parse::<i64>().unwrap())
+                .map(|x| x.parse::<i64>().expect("cannot parse int"))
                 .collect_tuple()
         })
         .unzip())
