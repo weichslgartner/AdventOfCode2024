@@ -1,44 +1,36 @@
+from typing import List
+
 from aoc import get_lines, line_to_int
 
 
-def parse_input(lines):
-    return [line_to_int(l, split_char=" ") for l in lines]
+def parse_input(lines: List[str]) -> List[List[int]]:
+    return [line_to_int(i, split_char=" ") for i in lines]
 
 
-def safe(diffs):
+def safe(diffs: List[int]) -> bool:
     all_positive = all(map(lambda x: x > 0, diffs))
     all_negative = all(map(lambda x: x < 0, diffs))
     in_range = all(map(lambda x: 0 < abs(x) <= 3, diffs))
     return in_range and (all_negative or all_positive)
 
 
-def part_1(levels):
-    sum = 0
-    for l in levels:
-        diffs = [i - j for i, j in zip(l[1:], l)]
-        sum += safe(diffs)
-    return sum
+def adjacent_difference(level: List[int]) -> List[int]:
+    return list(map(lambda x: x[0] - x[1], zip(level[1:], level)))
 
 
-def remove_one(levels):
-    for i in range(len(levels) - 1):
-        yield levels[:i] + levels[i + 1:]
+def damp(level: List[int]) -> bool:
+    for i in range(len(level)):
+        if safe(adjacent_difference(level[:i] + level[i + 1:])):
+            return True
+    return False
 
 
-def part_2(levels):
-    sum = 0
-    for l in levels:
-        diffs = [i - j for i, j in zip(l[1:], l)]
-        if safe(diffs):
-            sum += 1
-        else:
-            for i in range(len(l)):
-                l_new = l[:i] + l[i + 1:]
-                diffs = [i - j for i, j in zip(l_new[1:], l_new)]
-                if safe(diffs):
-                    sum += 1
-                    break
-    return sum
+def part_1(levels: List[List[int]]) -> int:
+    return sum(safe(adjacent_difference(i)) for i in levels)
+
+
+def part_2(levels: List[List[int]]) -> int:
+    return sum(safe(adjacent_difference(i)) or damp(i) for i in levels)
 
 
 def main():
