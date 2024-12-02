@@ -9,7 +9,7 @@ def parse_input(lines: List[str]) -> (List[int], List[int]):
 
 
 def part_1(one: List[int], two: List[int]) -> int:
-    return sum(abs(o - t) for o, t in zip(sorted(one), sorted(two)))
+    return sum(abs(o - t) for o, t in zip(*map(sorted, (one, two))))
 
 
 def part_2(one: List[int], two: List[int]) -> int:
