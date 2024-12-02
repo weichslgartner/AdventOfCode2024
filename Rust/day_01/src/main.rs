@@ -1,16 +1,17 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use itertools::Itertools;
 
 fn parse_input(input: &str) -> Result<(Vec<i64>, Vec<i64>)> {
-    Ok(input
+    input
         .lines()
-        .map(|s| s.split_whitespace())
-        .filter_map(|val| {
-            val.take(2)
-                .map(|x| x.parse::<i64>().expect("cannot parse int"))
+        .map(|line| {
+            aoc::line_to_int::<i64, ' '>(line)?                
+                .into_iter()
                 .collect_tuple()
+                .context("Failed to convert line to tuple")
         })
-        .unzip())
+        .collect::<Result<Vec<(i64, i64)>>>()
+        .map(|pairs| pairs.into_iter().unzip())
 }
 
 fn part_1(l1: &[i64], l2: &[i64]) -> i64 {
