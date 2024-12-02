@@ -43,7 +43,6 @@ fn part_2(levels: &[Vec<i32>]) -> usize {
 fn main() {
     let input = include_str!("../../../inputs/input_02.txt");
     let levels = aoc::parse_ints::<i32, ' '>(input).expect("Failed to parse input");
-
     println!("Part 1: {}", part_1(&levels));
     println!("Part 2: {}", part_2(&levels));
 }
