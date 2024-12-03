@@ -1,41 +1,48 @@
 use regex::Regex;
 
-type Tuple = (String, String, String, i32, i32);
-
-fn parse_input(line: &str) -> Vec<Tuple> {
+#[derive(Debug)]
+struct Instruction {
+    do_group: bool,
+    dont_group: bool,
+    mul_group: bool,
+    first_num: i32,
+    second_num: i32,
+}
+fn parse_input(line: &str) -> Vec<Instruction> {
     let re = Regex::new(r"(do\(\))|(don't\(\))|(mul\((\d+),(\d+)\))").unwrap();
     re.captures_iter(line)
         .map(|cap| {
-            let do_group = cap.get(1).map_or("", |m| m.as_str()).to_string();
-            let dont_group = cap.get(2).map_or("", |m| m.as_str()).to_string();
-            let mul_group = cap.get(3).map_or("", |m| m.as_str()).to_string();
-            let first_num = cap.get(4).map_or("0", |m| m.as_str()).parse::<i32>().unwrap_or(0);
-            let second_num = cap.get(5).map_or("0", |m| m.as_str()).parse::<i32>().unwrap_or(0);
-            (do_group, dont_group, mul_group, first_num, second_num)
+            Instruction {
+                do_group: !cap.get(1).map_or("", |m| m.as_str()).is_empty(),
+                dont_group: !cap.get(2).map_or("", |m| m.as_str()).is_empty(),
+                mul_group: !cap.get(3).map_or("", |m| m.as_str()).is_empty(),
+                first_num: cap.get(4).map_or("0", |m| m.as_str()).parse::<i32>().unwrap_or(0),
+                second_num: cap.get(5).map_or("0", |m| m.as_str()).parse::<i32>().unwrap_or(0),
+            }
         })
         .collect()
 }
 
-fn part_1(tups: &[Tuple]) -> i32 {
-    tups.iter()
-        .filter(|tup| !tup.2.is_empty())
-        .map(|tup| tup.3 * tup.4)
+fn part_1(instructions: &[Instruction]) -> i32 {
+    instructions.iter()
+        .filter(|i| i.mul_group)
+        .map(|i| i.first_num * i.second_num)
         .sum()
 }
 
-fn conditional_mul(state: (bool, i32), el: &Tuple) -> (bool, i32) {
+fn conditional_mul(state: (bool, i32), el: &Instruction) -> (bool, i32) {
     let (mut enabled, mut total) = state;
-    if el.0 == "do()" {
+    if el.do_group{
         enabled = true;
-    } else if el.1 == "don't()" {
+    } else if el.dont_group {
         enabled = false;
-    } else if el.2.starts_with("mul") && enabled {
-        total += el.3 * el.4;
+    } else if el.mul_group && enabled {
+        total += el.first_num * el.second_num;
     }
     (enabled, total)
 }
 
-fn part_2(tups: &[Tuple]) -> i32 {
+fn part_2(tups: &[Instruction]) -> i32 {
     tups.iter().fold((true, 0), conditional_mul).1
 }
 
