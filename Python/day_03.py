@@ -1,29 +1,33 @@
 import operator
+from functools import reduce
 
 from aoc import get_lines, input_as_str, extract_all_ints
 import re
 
+
 def parse_input(line):
-    res = re.findall(r'(?P<do>do\(\))|(?P<dont>don\'t\(\))|(?P<mul>mul\((\d+),(\d+)\))',line)
-    return res
+    return list(map(lambda x: (*x[0:3], int(x[-2]), int(x[-1])) if x[-1] else x,
+                    re.findall(r'(do\(\))|(don\'t\(\))|(mul\((\d+),(\d+)\))', line)))
 
 
 def part_1(tups):
-    return sum(map(lambda x: int(x[-1])*int(x[-2]),filter(lambda x: len(x[3])>0,tups)))
+    return sum(map(lambda x: x[-1] * x[-2], filter(lambda x: len(x[2]) > 0, tups)))
+
+
+def conditional_mul(state, r):
+    enabled, total = state
+    if r[0] == "do()":
+        enabled = True
+    elif r[1] == "don't()":
+        enabled = False
+    elif r[2].startswith("mul"):
+        total += r[-1] * r[-2] if enabled else 0
+    return enabled, total
 
 
 def part_2(tups):
-    enabled = True
-    sum = 0
-    for r in tups:
-        if r[0] == "do()":
-            enabled = True
-        elif r[1] == "don't()":
-            enabled = False
-        elif r[2].startswith("mul"):
-            if enabled:
-                sum += int(r[-1])*int(r[-2])
-    return sum
+    return reduce(conditional_mul, tups, (True, 0))[1]
+
 
 def main():
     test = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
