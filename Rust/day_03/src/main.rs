@@ -29,16 +29,14 @@ fn conditional_mul(state: (bool, i32), el: &Tuple) -> (bool, i32) {
         enabled = true;
     } else if el.1 == "don't()" {
         enabled = false;
-    } else if el.2.starts_with("mul") {
-        if enabled {
-            total += el.3 * el.4;
-        }
+    } else if el.2.starts_with("mul") && enabled {
+        total += el.3 * el.4;
     }
     (enabled, total)
 }
 
 fn part_2(tups: &[Tuple]) -> i32 {
-    tups.iter().fold((true, 0), |state, el| conditional_mul(state, el)).1
+    tups.iter().fold((true, 0), conditional_mul).1
 }
 
 fn main() {

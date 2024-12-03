@@ -20,8 +20,8 @@ def conditional_mul(state: (bool, int), el: Tuple) -> (bool, int):
         enabled = True
     elif el[1] == "don't()":
         enabled = False
-    elif el[2].startswith("mul"):
-        total += el[-1] * el[-2] if enabled else 0
+    elif el[2].startswith("mul") and enabled:
+        total += el[-1] * el[-2]
     return enabled, total
 
 
