@@ -15,7 +15,7 @@ class Instruction(NamedTuple):
 
 def parse_input(line: str) -> List[Instruction]:
     return list(map(lambda x: Instruction(*x[:3], f_n=int(x[-2]), s_n=int(x[-1])) if x[-1] else Instruction(*x),
-                    re.findall(r'(do\(\))|(don\'t\(\))|(mul\((\d+),(\d+)\))', line)))
+                    re.findall(r'(do\(\))|(don\'t\(\))|(mul\((\d{3}),(\d{3})\))', line)))
 
 
 def part_1(instructions: List[Instruction]) -> int:
