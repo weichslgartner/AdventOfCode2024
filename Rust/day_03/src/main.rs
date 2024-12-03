@@ -9,7 +9,7 @@ struct Instruction {
     second_num: i32,
 }
 fn parse_input(line: &str) -> Vec<Instruction> {
-    let re = Regex::new(r"(do\(\))|(don't\(\))|(mul\((\d{3}),(\d{3})\))").unwrap();
+    let re = Regex::new(r"(do\(\))|(don't\(\))|(mul\((\d{1,3}),(\d{1,3})\))").unwrap();
     re.captures_iter(line)
         .map(|cap| Instruction {
             do_group: cap.get(1).map_or(false, |m| !m.as_str().is_empty()),
