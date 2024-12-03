@@ -1,32 +1,40 @@
 import re
 from functools import reduce
-from typing import List, Tuple
+from typing import List, NamedTuple
 
 from aoc import input_as_str
 
 
-def parse_input(line: str) -> List[Tuple]:
-    return list(map(lambda x: (*x[0:3], int(x[-2]), int(x[-1])) if x[-1] else x,
+class Instruction(NamedTuple):
+    do: str
+    dont: str
+    mul: str
+    f_n: int
+    s_n: int
+
+
+def parse_input(line: str) -> List[Instruction]:
+    return list(map(lambda x: Instruction(*x[:3], f_n=int(x[-2]), s_n=int(x[-1])) if x[-1] else Instruction(*x),
                     re.findall(r'(do\(\))|(don\'t\(\))|(mul\((\d+),(\d+)\))', line)))
 
 
-def part_1(tups: List[tuple]) -> int:
-    return sum(map(lambda x: x[-1] * x[-2], filter(lambda x: len(x[2]) > 0, tups)))
+def part_1(instructions: List[Instruction]) -> int:
+    return sum(map(lambda i: i.f_n * i.s_n, filter(lambda x: x.mul_group, instructions)))
 
 
-def conditional_mul(state: (bool, int), el: Tuple) -> (bool, int):
+def conditional_mul(state: (bool, int), el: Instruction) -> (bool, int):
     enabled, total = state
-    if el[0] == "do()":
+    if el.do:
         enabled = True
-    elif el[1] == "don't()":
+    elif el.dont:
         enabled = False
-    elif el[2].startswith("mul") and enabled:
-        total += el[-1] * el[-2]
+    elif el.mul and enabled:
+        total += el.f_n * el.s_n
     return enabled, total
 
 
-def part_2(tups: List[Tuple]) -> int:
-    return reduce(conditional_mul, tups, (True, 0))[1]
+def part_2(instructions: List[Instruction]) -> int:
+    return reduce(conditional_mul, instructions, (True, 0))[1]
 
 
 def main():
