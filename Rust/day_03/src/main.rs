@@ -11,20 +11,23 @@ struct Instruction {
 fn parse_input(line: &str) -> Vec<Instruction> {
     let re = Regex::new(r"(do\(\))|(don't\(\))|(mul\((\d+),(\d+)\))").unwrap();
     re.captures_iter(line)
-        .map(|cap| {
-            Instruction {
-                do_group: !cap.get(1).map_or("", |m| m.as_str()).is_empty(),
-                dont_group: !cap.get(2).map_or("", |m| m.as_str()).is_empty(),
-                mul_group: !cap.get(3).map_or("", |m| m.as_str()).is_empty(),
-                first_num: cap.get(4).map_or("0", |m| m.as_str()).parse::<i32>().unwrap_or(0),
-                second_num: cap.get(5).map_or("0", |m| m.as_str()).parse::<i32>().unwrap_or(0),
-            }
+        .map(|cap| Instruction {
+            do_group: cap.get(1).map_or(false, |m| !m.as_str().is_empty()),
+            dont_group: cap.get(2).map_or(false, |m| !m.as_str().is_empty()),
+            mul_group: cap.get(3).map_or(false, |m| !m.as_str().is_empty()),
+            first_num: cap
+                .get(4)
+                .map_or(0, |m| m.as_str().parse::<i32>().unwrap_or(0)),
+            second_num: cap
+                .get(5)
+                .map_or(0, |m| m.as_str().parse::<i32>().unwrap_or(0))
         })
         .collect()
 }
 
 fn part_1(instructions: &[Instruction]) -> i32 {
-    instructions.iter()
+    instructions
+        .iter()
         .filter(|i| i.mul_group)
         .map(|i| i.first_num * i.second_num)
         .sum()
@@ -32,7 +35,7 @@ fn part_1(instructions: &[Instruction]) -> i32 {
 
 fn conditional_mul(state: (bool, i32), el: &Instruction) -> (bool, i32) {
     let (mut enabled, mut total) = state;
-    if el.do_group{
+    if el.do_group {
         enabled = true;
     } else if el.dont_group {
         enabled = false;
@@ -52,4 +55,3 @@ fn main() {
     println!("Part 1: {}", part_1(&tups));
     println!("Part 2: {}", part_2(&tups));
 }
-
