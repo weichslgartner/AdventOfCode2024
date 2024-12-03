@@ -1,8 +1,7 @@
-import operator
+import re
 from functools import reduce
 
-from aoc import get_lines, input_as_str, extract_all_ints
-import re
+from aoc import input_as_str
 
 
 def parse_input(line):
