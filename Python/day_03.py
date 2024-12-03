@@ -19,7 +19,7 @@ def parse_input(line: str) -> List[Instruction]:
 
 
 def part_1(instructions: List[Instruction]) -> int:
-    return sum(map(lambda i: i.f_n * i.s_n, filter(lambda x: x.mul_group, instructions)))
+    return sum(map(lambda i: i.f_n * i.s_n, filter(lambda x: x.mul, instructions)))
 
 
 def conditional_mul(state: (bool, int), el: Instruction) -> (bool, int):
