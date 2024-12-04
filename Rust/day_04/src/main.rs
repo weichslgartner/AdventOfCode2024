@@ -60,9 +60,6 @@ fn part_2(grid: &[Vec<char>]) -> i32 {
     let to_find = "MAS";
     let l = to_find.len();
     let mut cnt = 0;
-    let to_find_chars: Vec<char> = to_find.chars().collect();
-    let to_find_reverse: Vec<char> = to_find_chars.iter().rev().cloned().collect();
-
     for y in 0..=(grid.len() - l) {
         for x in 0..=(grid[0].len() - l) {
             let diag1: String = (0..l).map(|i| grid[y + i][x + i]).collect();
