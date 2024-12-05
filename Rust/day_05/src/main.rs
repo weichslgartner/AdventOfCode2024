@@ -5,7 +5,6 @@ use std::{
 
 fn parse_input(input: &str) -> (HashMap<i32, HashSet<i32>>, Vec<Vec<i32>>) {
     let (rules_section, pages_section) = input.split_once("\n\n").unwrap();
-
     let rules = rules_section
         .lines()
         .map(|line| {
@@ -33,8 +32,6 @@ fn parse_input(input: &str) -> (HashMap<i32, HashSet<i32>>, Vec<Vec<i32>>) {
 
     (rules, pages)
 }
-
-//    return not any(set(update[:i]) & rules[p] for i, p in reversed(list(enumerate(update))))
 
 fn is_in_order(update: &[i32], rules: &HashMap<i32, HashSet<i32>>) -> bool {
     (0..update.len()).rev().all(|i| {
