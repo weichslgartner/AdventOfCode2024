@@ -1,18 +1,20 @@
+import functools
+import heapq
 from collections import defaultdict
-from typing import List
+from typing import List, Set
 
 from aoc import input_as_str, extract_all_ints
 
 
-def parse_input(lines):
-    rules_, pages = lines.split("\n\n", maxsplit=2)
+def parse_input(input_str: str) -> (dict[int, Set[int]], List[List[int]]):
+    rules_, pages = input_str.split("\n\n", maxsplit=2)
     rules = defaultdict(set)
     [rules[x[0]].add(x[1]) for x in map(extract_all_ints, rules_.splitlines())]
     pages = [extract_all_ints(i) for i in pages.splitlines()]
     return rules, pages
 
 
-def part_1(rules, pages):
+def part_1(rules: dict[int, Set[int]], pages: List[List[int]]) -> int:
     cnt = 0
     for update in pages:
         if is_in_order(update, rules):
@@ -20,7 +22,7 @@ def part_1(rules, pages):
     return cnt
 
 
-def is_in_order(update, rules) -> bool:
+def is_in_order(update: List[int], rules: dict[int, Set[int]]) -> bool:
     for i, p in reversed(list(enumerate(update))):
         rest = set(update[:i])
         if rest & rules[p]:
@@ -28,28 +30,11 @@ def is_in_order(update, rules) -> bool:
     return True
 
 
-def fix(cur, rest, rules) -> List[int]:
-    if len(rest) == 0 and is_in_order(rest, rules):
-        return cur
-    for i in rest:
-        next_cur = cur.copy()
-        next_cur.append(i)
-        if is_in_order(next_cur, rules):
-            next_rest = rest.copy()
-            next_rest.remove(i)
-            result = fix(next_cur, next_rest, rules)
-            if result is not None:
-                return result
-    return None
-
-
-def part_2(rules, pages):
-    cnt = 0
-    for update in pages:
-        if not is_in_order(update, rules):
-            update = fix([], update, rules)
-            cnt += update[len(update) // 2]
-    return cnt
+def part_2(rules: dict[int, Set[int]], pages: List[List[int]]) -> int:
+    return sum(
+        map(lambda x:
+            heapq.nsmallest(len(x) // 2 + 1, x, key=functools.cmp_to_key(lambda a, b: -1 if b in rules[a] else 1))[-1],
+            filter(lambda x: not is_in_order(x, rules), pages)))
 
 
 def main():
