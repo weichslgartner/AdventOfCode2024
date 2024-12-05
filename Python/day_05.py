@@ -13,20 +13,16 @@ def parse_input(input_str: str) -> (dict[int, Set[int]], List[List[int]]):
     return rules, [extract_all_ints(i) for i in pages.splitlines()]
 
 
-def part_1(rules: dict[int, Set[int]], pages: List[List[int]]) -> int:
-    cnt = 0
-    for update in pages:
-        if is_in_order(update, rules):
-            cnt += update[len(update) // 2]
-    return cnt
-
-
 def is_in_order(update: List[int], rules: dict[int, Set[int]]) -> bool:
     for i, p in reversed(list(enumerate(update))):
         rest = set(update[:i])
         if rest & rules[p]:
             return False
     return True
+
+
+def part_1(rules: dict[int, Set[int]], pages: List[List[int]]) -> int:
+    return sum(i[len(i) // 2] for i in filter(lambda update: is_in_order(update, rules), pages))
 
 
 def part_2(rules: dict[int, Set[int]], pages: List[List[int]]) -> int:
