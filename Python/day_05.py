@@ -10,8 +10,7 @@ def parse_input(input_str: str) -> (dict[int, Set[int]], List[List[int]]):
     rules_, pages = input_str.split("\n\n", maxsplit=2)
     rules = defaultdict(set)
     [rules[x[0]].add(x[1]) for x in map(extract_all_ints, rules_.splitlines())]
-    pages = [extract_all_ints(i) for i in pages.splitlines()]
-    return rules, pages
+    return rules, [extract_all_ints(i) for i in pages.splitlines()]
 
 
 def part_1(rules: dict[int, Set[int]], pages: List[List[int]]) -> int:
