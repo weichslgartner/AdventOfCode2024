@@ -1,12 +1,11 @@
-from aoc import get_lines, Point
+from aoc import get_lines
 
 
 def parse_input(lines):
     return [[c for c in l] for l in lines]
 
 
-def part_1(grid):
-    to_find = "XMAS"
+def part_1(grid, to_find="XMAS"):
     l = len(to_find)
     cnt = 0
     for y in range(len(grid)):
@@ -44,8 +43,7 @@ def print_debug(debug):
         print()
 
 
-def part_2(grid):
-    to_find = "MAS"
+def part_2(grid, to_find="MAS"):
     l = len(to_find)
     cnt = 0
     for y in range(len(grid) - len(to_find) + 1):

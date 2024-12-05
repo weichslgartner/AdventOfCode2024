@@ -8,6 +8,9 @@ fn part_1(grid: &[Vec<char>]) -> usize {
     let mut cnt = 0;
     for y in 0..grid.len() {
         for x in 0..grid[0].len() {
+            if grid[y][x] != 'X' {
+                continue;
+            }
             // horizontal
             if x + l <= grid[0].len()
                 && to_find == (0..l).map(|i| grid[y][x + i]).collect::<String>()
@@ -52,10 +55,10 @@ fn part_1(grid: &[Vec<char>]) -> usize {
                 cnt += 1;
             }
         }
-        //  println!();
     }
     cnt
 }
+
 fn part_2(grid: &[Vec<char>]) -> i32 {
     let to_find = "MAS";
     let l = to_find.len();
@@ -72,7 +75,6 @@ fn part_2(grid: &[Vec<char>]) -> i32 {
             }
         }
     }
-
     cnt
 }
 
