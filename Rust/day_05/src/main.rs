@@ -4,24 +4,24 @@ use std::{
 };
 
 fn parse_input(input: &str) -> (HashMap<i32, HashSet<i32>>, Vec<Vec<i32>>) {
-    let mut sections = input.split("\n\n");
-    let rules_section = sections.next().unwrap();
-    let pages_section = sections.next().unwrap();
+    let (rules_section, pages_section) = input.split_once("\n\n").unwrap();
 
-    let mut rules = HashMap::new();
-    for line in rules_section.lines() {
-        let nums: Vec<i32> = line
-            .split("|")
-            .filter_map(|x| x.parse::<i32>().ok())
-            .collect();
-        if nums.len() == 2 {
-            rules
-                .entry(nums[0])
-                .or_insert_with(HashSet::new)
-                .insert(nums[1]);
-        }
-    }
-
+    let rules = rules_section
+        .lines()
+        .map(|line| {
+            line.split("|")
+                .filter_map(|x| x.parse::<i32>().ok())
+                .collect::<Vec<_>>()
+        })
+        .fold(
+            HashMap::new(),
+            |mut acc: HashMap<i32, HashSet<i32>>, nums| {
+                if nums.len() > 1 {
+                    acc.entry(nums[0]).or_default().insert(nums[1]);
+                }
+                acc
+            },
+        );
     let pages = pages_section
         .lines()
         .map(|line| {
@@ -34,17 +34,15 @@ fn parse_input(input: &str) -> (HashMap<i32, HashSet<i32>>, Vec<Vec<i32>>) {
     (rules, pages)
 }
 
+//    return not any(set(update[:i]) & rules[p] for i, p in reversed(list(enumerate(update))))
+
 fn is_in_order(update: &[i32], rules: &HashMap<i32, HashSet<i32>>) -> bool {
-    for i in (0..update.len()).rev() {
-        let p = update[i];
-        let rest: HashSet<i32> = update[..i].iter().cloned().collect();
-        if let Some(required) = rules.get(&p) {
-            if !rest.is_disjoint(required) {
-                return false;
-            }
-        }
-    }
-    true
+    (0..update.len()).rev().all(|i| {
+        rules
+            .get(&update[i])
+            .unwrap()
+            .is_disjoint(&update[..i].iter().cloned().collect::<HashSet<i32>>())
+    })
 }
 
 fn part_1(rules: &HashMap<i32, HashSet<i32>>, pages: &[Vec<i32>]) -> i32 {
