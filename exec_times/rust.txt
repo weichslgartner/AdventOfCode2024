@@ -1,11 +1,11 @@
 ~/githubprojects/AdventOfCode2024 ~/githubprojects/AdventOfCode2024
 day_01
-[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.04s
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.03s
 Part 1: 1882714
 Part 2: 19437052
 
-real	0m0,004s
-user	0m0,004s
+real	0m0,001s
+user	0m0,001s
 sys	0m0,000s
 
 day_02
@@ -14,8 +14,8 @@ Part 1: 479
 Part 2: 531
 
 real	0m0,002s
-user	0m0,002s
-sys	0m0,000s
+user	0m0,000s
+sys	0m0,002s
 
 day_03
 [1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.01s
@@ -41,7 +41,7 @@ Part 1: 4814
 Part 2: 5448
 
 real	0m0,002s
-user	0m0,000s
-sys	0m0,002s
+user	0m0,002s
+sys	0m0,000s
 
 ~/githubprojects/AdventOfCode2024
