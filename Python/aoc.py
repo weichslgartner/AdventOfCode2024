@@ -11,18 +11,22 @@ class Point(namedtuple('Point', 'x y')):
         return f'{self.x} {self.y}'
 
 
-class Direction(StrEnum):
+class DirectionStr(StrEnum):
     NORTH = "^"
-    WEST = "<"
     EAST = ">"
     SOUTH = "v"
+    WEST = "<"
 
 
-class DirectionInt(Enum):
-    NORTH = 1
-    WEST = 2
-    EAST = 3
-    SOUTH = 4
+
+
+class Direction(Enum):
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+
+
 
 
 def dir_to_str(direction: Direction) -> str:
