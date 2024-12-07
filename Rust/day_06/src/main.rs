@@ -103,21 +103,20 @@ fn part_2(obstacles: &mut HashSet<Point>, start: Point, max_p: Point) -> usize {
     let mut cnt = 0;
     while cur.x >= 0 && cur.x < max_p.x && cur.y >= 0 && cur.y < max_p.y {
         let (new_dir, next_p) = get_next_point(cur, dir, obstacles);
-        if !obstacles.contains(&next_p) && !new_obstacles.contains(&next_p) {
+        if !obstacles.contains(&next_p) && !new_obstacles.contains(&next_p) && next_p != start {
             obstacles.insert(next_p);
 
             if has_loops(cur, dir, max_p, obstacles, &visited_dir) {
                 new_obstacles.insert(next_p);
             }
 
-            
             obstacles.remove(&next_p);
         }
         visited_dir.insert((cur, dir));
         cur = next_p;
         dir = new_dir;
     }
-
+  //  println!("{:?}", new_obstacles);
     new_obstacles.len()
 }
 
@@ -132,13 +131,15 @@ fn has_loops(
     let mut visited_dir = visited_dir_.clone();
     let mut i = 0;
     while cur.x >= 0 && cur.x < max_p.x && cur.y >= 0 && cur.y < max_p.y && i < max_search {
-        if visited_dir.contains(&(cur, dir)) {
-            return true;
-        }
-       visited_dir.insert((cur, dir));
+  
+        visited_dir.insert((cur, dir));
 
         let (new_dir, next_p) = get_next_point(cur, dir, obstacles);
-
+        if visited_dir.contains(&(next_p, new_dir)) {
+            let next_next = get_next_point(next_p, new_dir, obstacles);
+            assert!(visited_dir.contains(&(next_next.1,next_next.0)));
+            return true;
+        }
         cur = next_p;
         dir = new_dir;
         i += 1;

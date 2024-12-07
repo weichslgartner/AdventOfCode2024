@@ -19,14 +19,8 @@ def part_1(obstacles, start, maxP ):
     visited = set()
     dir = Direction.NORTH
     while 0 <= cur.x < maxP.x and 0 <= cur.y < maxP.y:
-        next = dir_to_point(dir)
-        nextP = Point(x=cur.x+next.x, y=cur.y+next.y)
-        while nextP in obstacles:
-            dir = Direction((dir.value+1) % (len(Direction)))
-            next = dir_to_point(dir)
-            nextP = Point(x=cur.x + next.x, y=cur.y + next.y)
         visited.add(cur)
-        cur = nextP
+        dir, cur = get_next_point(cur, dir, obstacles)
     #print_grid(maxP, obstacles, visited)
     return len(visited)
 
@@ -50,17 +44,42 @@ def part_2(obstacles, start, maxP ):
     visited_dir = set()
     new_obstacles = set()
     dir = Direction.NORTH
+    n_obs = len(obstacles)
+    visited = set()
     while 0 <= cur.x < maxP.x and 0 <= cur.y < maxP.y:
         dir_, nextP = get_next_point(cur, dir, obstacles)
-        obstacles.add(nextP)
-        if has_loops(cur, dir, maxP, obstacles, visited_dir.copy()):
-            new_obstacles.add(nextP)
+        if nextP not in obstacles and nextP not in new_obstacles and nextP != start:
+            obstacles.add(nextP)
+            if has_loops(cur, dir, maxP, obstacles, visited_dir.copy()):
+                new_obstacles.add(nextP)
+            obstacles.remove(nextP)
+       # else:
+       #     print(nextP)
+        assert (cur, dir) not in visited_dir
         visited_dir.add((cur, dir))
-        obstacles.remove(nextP)
+        visited.add(cur)
         cur = nextP
         dir = dir_
+        assert n_obs == len(obstacles)
     #print_grid(maxP, obstacles, visited)
+    print_grid2(maxP, new_obstacles, obstacles, start)
+    print(len(visited))
     return len(new_obstacles)
+
+
+def print_grid2(maxP, new_obstacles, obstacles, start):
+    for y in range(maxP.y):
+        for x in range(maxP.x):
+            p = Point(x, y)
+            if p in new_obstacles:
+                print("O", end="")
+            elif p in obstacles:
+                print("#", end="")
+            elif p == start:
+                print("^", end="")
+            else:
+                print(".", end="")
+        print()
 
 
 def has_loops(cur, dir, maxP, obstacles, visited_dir):
@@ -68,7 +87,9 @@ def has_loops(cur, dir, maxP, obstacles, visited_dir):
         if (cur, dir) in visited_dir:
             return True
         visited_dir.add((cur, dir))
-        dir, nextP = get_next_point(cur, dir, obstacles)
+        dir_, nextP = get_next_point(cur, dir, obstacles)
+        assert dir != dir_
+        dir = dir_
         cur = nextP
     return False
 
