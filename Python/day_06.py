@@ -30,7 +30,7 @@ def solve(obstacles: Set[Point], start: Point, max_p: Point) -> (int, int):
             obstacles.remove(next_p)
         cur = next_p
         direction = dir_
-    return len(visited),len(new_obstacles)
+    return len(visited), len(new_obstacles)
 
 
 def has_loops(cur: Point, direction: Direction, max_p: Point, obstacles: Set[Point]) -> bool:
