@@ -15,6 +15,8 @@ def concat(a: str, b: str) -> int:
 def can_be_solved(cur: int, rest: List[str], target: int, ops) -> bool:
     if not rest:
         return cur == target
+    if cur > target:
+        return False
     next = rest.pop(0)
     for op in ops:
         res = can_be_solved(op(cur, next), rest, target,ops)
@@ -25,11 +27,13 @@ def can_be_solved(cur: int, rest: List[str], target: int, ops) -> bool:
 
 
 def part_1(lines):
-    return sum(map(lambda x: x[0], filter(lambda line: can_be_solved(line[1], line[2:], line[0],[operator.add, operator.mul]), lines)))
+    return sum(map(lambda x: x[0], filter(lambda line: can_be_solved(line[1], line[2:], line[0],
+                                                                     [operator.add, operator.mul]), lines)))
 
 
 def part_2(lines):
-    return sum(map(lambda x: x[0], filter(lambda line: can_be_solved(line[1], line[2:], line[0],[operator.add, operator.mul,concat]), lines)))
+    return sum(map(lambda x: x[0], filter(lambda line: can_be_solved(line[1], line[2:], line[0],
+                                                                     [operator.add, operator.mul,concat]), lines)))
 
 
 def main():
