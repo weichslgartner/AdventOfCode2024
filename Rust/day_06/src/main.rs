@@ -87,62 +87,46 @@ fn part_1(obstacles: &HashSet<Point>, start: Point, max_p: Point) -> usize {
                 y: cur.y + next.y,
             };
         }
-
         visited.insert(cur);
         cur = next_p;
     }
-
     visited.len()
 }
 
 fn part_2(obstacles: &mut HashSet<Point>, start: Point, max_p: Point) -> usize {
     let mut cur = start;
-    let mut visited_dir = HashSet::new();
     let mut new_obstacles = HashSet::new();
     let mut dir = Direction::North;
-    let mut cnt = 0;
     while cur.x >= 0 && cur.x < max_p.x && cur.y >= 0 && cur.y < max_p.y {
         let (new_dir, next_p) = get_next_point(cur, dir, obstacles);
         if !obstacles.contains(&next_p) && !new_obstacles.contains(&next_p) && next_p != start {
             obstacles.insert(next_p);
 
-            if has_loops(cur, dir, max_p, obstacles, &visited_dir) {
+            if has_loops(start, Direction::North, max_p, obstacles) {
                 new_obstacles.insert(next_p);
             }
 
             obstacles.remove(&next_p);
         }
-        visited_dir.insert((cur, dir));
         cur = next_p;
         dir = new_dir;
     }
-  //  println!("{:?}", new_obstacles);
     new_obstacles.len()
 }
 
-fn has_loops(
-    mut cur: Point,
-    mut dir: Direction,
-    max_p: Point,
-    obstacles: &HashSet<Point>,
-    visited_dir_: &HashSet<(Point, Direction)>,
-) -> bool {
-    let max_search = 9_000_000;
-    let mut visited_dir = visited_dir_.clone();
-    let mut i = 0;
-    while cur.x >= 0 && cur.x < max_p.x && cur.y >= 0 && cur.y < max_p.y && i < max_search {
-  
+fn has_loops(mut cur: Point, mut dir: Direction, max_p: Point, obstacles: &HashSet<Point>) -> bool {
+    let mut visited_dir = HashSet::new();
+    while cur.x >= 0 && cur.x < max_p.x && cur.y >= 0 && cur.y < max_p.y {
         visited_dir.insert((cur, dir));
 
         let (new_dir, next_p) = get_next_point(cur, dir, obstacles);
         if visited_dir.contains(&(next_p, new_dir)) {
             let next_next = get_next_point(next_p, new_dir, obstacles);
-            assert!(visited_dir.contains(&(next_next.1,next_next.0)));
+            assert!(visited_dir.contains(&(next_next.1, next_next.0)));
             return true;
         }
         cur = next_p;
         dir = new_dir;
-        i += 1;
     }
 
     false
