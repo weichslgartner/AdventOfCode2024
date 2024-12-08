@@ -83,7 +83,7 @@ impl Point {
     ///
     /// # Examples
     /// ```
-    /// use aoc::Point; // Replace `my_module` with your actual module name.
+    /// use aoc::Point; 
     ///
     /// let p = Point::new(3, 5);
     /// assert_eq!(p.x, 3);
@@ -106,7 +106,7 @@ impl Point {
 ///
 /// # Examples
 /// ```
-/// use aoc::{Point, is_in_grid}; // Replace `my_module` with your actual module name.
+/// use aoc::{Point, is_in_grid}; 
 ///
 /// let p = Point::new(2, 3);
 /// let grid_max = Point::new(5, 5);
