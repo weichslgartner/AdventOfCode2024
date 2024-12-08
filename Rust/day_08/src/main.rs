@@ -1,12 +1,11 @@
+use aoc::{is_in_grid, Point};
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
-use aoc::{Point,is_in_grid};
 
 fn parse_input(input: &str) -> (HashMap<char, HashSet<Point>>, Point) {
     let mut antennas: HashMap<char, HashSet<Point>> = HashMap::new();
-    let mut max_y = 0;
-    let mut max_x = 0;
-
+    let mut max_y: isize = 0;
+    let mut max_x: isize = 0;
     for (y, line) in input.lines().enumerate() {
         for (x, c) in line.chars().enumerate() {
             if c == '#' {
@@ -16,11 +15,11 @@ fn parse_input(input: &str) -> (HashMap<char, HashSet<Point>>, Point) {
                 antennas
                     .entry(c)
                     .or_default()
-                    .insert(Point::new(x, y));
+                    .insert(Point::new(x as isize, y as isize));
             }
-            max_x = max_x.max(x);
+            max_x = max_x.max(x as isize);
         }
-        max_y = max_y.max(y);
+        max_y = max_y.max(y as isize);
     }
 
     (antennas, Point::new(max_x + 1, max_y + 1))
@@ -34,27 +33,16 @@ fn find_antinodes(p1: Point, p2: Point, p_max: Point, part2: bool) -> HashSet<Po
     };
 
     for &(start, dx, dy) in &[
-        (
-            p1,
-            p1.x as isize - p2.x as isize,
-            p1.y as isize - p2.y as isize,
-        ),
-        (
-            p2,
-            p2.x as isize - p1.x as isize,
-            p2.y as isize - p1.y as isize,
-        ),
+        (p1, p1.x - p2.x, p1.y - p2.y),
+        (p2, p2.x - p1.x, p2.y - p1.y),
     ] {
-        let mut r = Point::new(
-            (start.x as isize + dx) as usize,
-            (start.y as isize + dy) as usize,
-        );
+        let mut r = Point::new(start.x + dx, start.y + dy);
         while is_in_grid(r, p_max) {
             antinodes.insert(r);
             if !part2 {
                 break;
             }
-            r = Point::new((r.x as isize + dx) as usize, (r.y as isize + dy) as usize);
+            r = Point::new(r.x + dx, r.y + dy);
         }
     }
 

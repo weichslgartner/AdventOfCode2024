@@ -70,8 +70,8 @@ pub fn parse_ints<T: FromStr, const SPLIT_CHAR: char>(input: &str) -> Result<Vec
 /// - `y`: The y-coordinate of the point.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Point {
-    pub x: usize,
-    pub y: usize,
+    pub x: isize,
+    pub y: isize,
 }
 
 impl Point {
@@ -89,7 +89,7 @@ impl Point {
     /// assert_eq!(p.x, 3);
     /// assert_eq!(p.y, 5);
     /// ```
-    pub fn new(x: usize, y: usize) -> Self {
+    pub fn new(x: isize, y: isize) -> Self {
         Self { x, y }
     }
 }
@@ -116,5 +116,5 @@ impl Point {
 /// assert!(!is_in_grid(outside_p, grid_max));
 /// ```
 pub fn is_in_grid(p: Point, p_max: Point) -> bool {
-    p.x < p_max.x && p.y < p_max.y
+    p.x >= 0 && p.y >= 0 && p.x < p_max.x && p.y < p_max.y
 }

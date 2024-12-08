@@ -70,7 +70,7 @@ fn part_2(rules: &HashMap<i32, HashSet<i32>>, pages: &mut [Vec<i32>]) -> i32 {
 
 fn main() {
     let input = include_str!("../../../inputs/input_05.txt");
-    let (rules, mut pages) = parse_input(&input);
+    let (rules, mut pages) = parse_input(input);
     println!("Part 1: {}", part_1(&rules, &pages));
     println!("Part 2: {}", part_2(&rules, &mut pages));
 }
