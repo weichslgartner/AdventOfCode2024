@@ -7,14 +7,12 @@ from aoc import Point, is_in_grid, get_lines
 
 
 def parse_input(lines: List[str]) -> (Dict[str, Set[Point]], Point):
-    antennas = defaultdict(list)
-    for y, line in enumerate(lines):
-        for x, c in enumerate(line):
-            if c == "#":
-                continue
-            if c != ".":
-                antennas[c].append(Point(x=x, y=y))
-    return antennas, Point(x=len(lines[0]), y=len(lines))
+    return (reduce(lambda acc, coord: acc[coord[2]].append(Point(x=coord[1], y=coord[0])) or acc,
+                   ((y, x, c)
+                    for y, line in enumerate(lines)
+                    for x, c in enumerate(line)
+                    if c not in {".", "#"}
+                    ), defaultdict(list), ), Point(x=len(lines[0]), y=len(lines)))
 
 
 def find_antinodes(p1: Point, p2: Point, p_max: Point, part2: bool = False) -> Set[Point]:
