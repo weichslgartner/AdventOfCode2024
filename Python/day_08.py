@@ -17,36 +17,26 @@ def parse_input(lines):
     return antennas, Point(x=len(lines[0]), y=len(lines)), points
 
 
-def find_antitodes(p1: Point, p2: Point):
-    r1 = Point(x=p1.x + (p1.x - p2.x), y=p1.y + (p1.y - p2.y))
-    r2 = Point(x=p2.x + (p2.x - p1.x), y=p2.y + (p2.y - p1.y))
-    return r1, r2
 
-
-def find_antitodes2(p1: Point, p2: Point, max_p):
-    antitodes = {p1, p2}
+def find_antitodes(p1: Point, p2: Point, max_p, part2=False):
+    antitodes = {p1, p2} if part2 else set()
     r1 = Point(x=p1.x + (p1.x - p2.x), y=p1.y + (p1.y - p2.y))
     while is_in_grid(r1, max_p):
         antitodes.add(r1)
+        if not part2:
+            break
         r1 = Point(x=r1.x + (p1.x - p2.x), y=r1.y + (p1.y - p2.y))
     r2 = Point(x=p2.x + (p2.x - p1.x), y=p2.y + (p2.y - p1.y))
     while is_in_grid(r2, max_p):
         antitodes.add(r2)
+        if not part2:
+            break
         r2 = Point(x=r2.x + (p2.x - p1.x), y=r2.y + (p2.y - p1.y))
     return antitodes
 
 
 def part_1(antennas, max_p, points):
-    antitodes = set()
-    for freq, locs in antennas.items():
-        for c in combinations(locs, r=2):
-            print(c)
-            p1, p2 = find_antitodes(c[0], c[1])
-            if is_in_grid(p1, p_max=max_p):
-                antitodes.add(p1)
-            if is_in_grid(p2, p_max=max_p):
-                antitodes.add(p2)
-    return len(antitodes)
+    return solve(antennas, max_p, part2=False)
 
 
 def debug_print(antitodes, max_p, points):
@@ -63,10 +53,14 @@ def debug_print(antitodes, max_p, points):
 
 
 def part_2(antennas, max_p, points):
+    return solve(antennas, max_p, part2=True)
+
+
+def solve(antennas, max_p, part2):
     antitodes = set()
     for freq, locs in antennas.items():
         for c in combinations(locs, r=2):
-            ants = find_antitodes2(c[0], c[1], max_p)
+            ants = find_antitodes(c[0], c[1], max_p, part2=part2)
             antitodes.update(ants)
     return len(antitodes)
 
