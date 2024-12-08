@@ -63,7 +63,11 @@ pub fn parse_ints<T: FromStr, const SPLIT_CHAR: char>(input: &str) -> Result<Vec
         .collect()
 }
 
-
+/// A structure representing a point in a 2D grid.
+/// 
+/// # Fields
+/// - `x`: The x-coordinate of the point.
+/// - `y`: The y-coordinate of the point.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Point {
     pub x: usize,
@@ -71,11 +75,46 @@ pub struct Point {
 }
 
 impl Point {
+    /// Creates a new `Point` with the given x and y coordinates.
+    ///
+    /// # Arguments
+    /// - `x`: The x-coordinate of the point.
+    /// - `y`: The y-coordinate of the point.
+    ///
+    /// # Examples
+    /// ```
+    /// use aoc::Point; // Replace `my_module` with your actual module name.
+    ///
+    /// let p = Point::new(3, 5);
+    /// assert_eq!(p.x, 3);
+    /// assert_eq!(p.y, 5);
+    /// ```
     pub fn new(x: usize, y: usize) -> Self {
         Self { x, y }
     }
 }
 
+/// Checks if a given point `p` lies within the bounds of a grid defined by the maximum point `p_max`.
+///
+/// # Arguments
+/// - `p`: The point to check.
+/// - `p_max`: The maximum bounds of the grid. Points are valid if `0 <= x < p_max.x` and `0 <= y < p_max.y`.
+///
+/// # Returns
+/// - `true` if the point is within the grid bounds.
+/// - `false` otherwise.
+///
+/// # Examples
+/// ```
+/// use aoc::{Point, is_in_grid}; // Replace `my_module` with your actual module name.
+///
+/// let p = Point::new(2, 3);
+/// let grid_max = Point::new(5, 5);
+/// assert!(is_in_grid(p, grid_max));
+///
+/// let outside_p = Point::new(5, 3);
+/// assert!(!is_in_grid(outside_p, grid_max));
+/// ```
 pub fn is_in_grid(p: Point, p_max: Point) -> bool {
     p.x < p_max.x && p.y < p_max.y
 }
