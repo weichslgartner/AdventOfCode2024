@@ -52,16 +52,13 @@ fn find_antinodes(p1: Point, p2: Point, p_max: Point, part2: bool) -> HashSet<Po
 fn solve(antennas: &HashMap<char, HashSet<Point>>, max_p: Point, part2: bool) -> usize {
     antennas
         .values()
-        .flat_map(|locs| {
+        .map(|locs| {
             locs.iter()
                 .combinations(2)
                 .map(|pair| find_antinodes(*pair[0], *pair[1], max_p, part2))
                 .fold(HashSet::new(), |acc, set| &acc | &set)
         })
-        .fold(HashSet::new(), |mut acc, p| {
-            acc.insert(p);
-            acc
-        })
+        .fold(HashSet::new(), |acc, set| &acc | &set)
         .len()
 }
 
