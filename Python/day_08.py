@@ -1,75 +1,60 @@
 from collections import defaultdict
+from functools import reduce
 from itertools import combinations
+from typing import Set, Dict, List
 
-from aoc import *
+from aoc import Point, is_in_grid, get_lines
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> (Dict[str, Set[Point]], Point):
     antennas = defaultdict(list)
-    points = {}
     for y, line in enumerate(lines):
         for x, c in enumerate(line):
             if c == "#":
                 continue
             if c != ".":
                 antennas[c].append(Point(x=x, y=y))
-                points[Point(x=x, y=y)] = c
-    return antennas, Point(x=len(lines[0]), y=len(lines)), points
+    return antennas, Point(x=len(lines[0]), y=len(lines))
 
 
-
-def find_antitodes(p1: Point, p2: Point, max_p, part2=False):
-    antitodes = {p1, p2} if part2 else set()
-    r1 = Point(x=p1.x + (p1.x - p2.x), y=p1.y + (p1.y - p2.y))
-    while is_in_grid(r1, max_p):
-        antitodes.add(r1)
-        if not part2:
-            break
-        r1 = Point(x=r1.x + (p1.x - p2.x), y=r1.y + (p1.y - p2.y))
-    r2 = Point(x=p2.x + (p2.x - p1.x), y=p2.y + (p2.y - p1.y))
-    while is_in_grid(r2, max_p):
-        antitodes.add(r2)
-        if not part2:
-            break
-        r2 = Point(x=r2.x + (p2.x - p1.x), y=r2.y + (p2.y - p1.y))
-    return antitodes
+def find_antinodes(p1: Point, p2: Point, p_max: Point, part2: bool = False) -> Set[Point]:
+    antinodes = {p1, p2} if part2 else set()
+    for p_start, p_delta_x, p_delta_y in [(p1, p1.x - p2.x, p1.y - p2.y),
+                                          (p2, p2.x - p1.x, p2.y - p1.y)]:
+        r = Point(x=p_start.x + p_delta_x, y=p_start.y + p_delta_y)
+        while is_in_grid(r, p_max):
+            antinodes.add(r)
+            if not part2:
+                break
+            r = Point(x=r.x + p_delta_x, y=r.y + p_delta_y)
+    return antinodes
 
 
-def part_1(antennas, max_p, points):
-    return solve(antennas, max_p, part2=False)
+def solve(antennas: Dict[str, Set[Point]], max_p: Point, part2: bool) -> int:
+    return len(reduce(
+        lambda acc, locs: acc | reduce(
+            lambda inner_acc, pair: inner_acc | find_antinodes(pair[0], pair[1], max_p, part2=part2),
+            combinations(locs, r=2),
+            set()
+        ),
+        antennas.values(),
+        set()
+    ))
 
 
-def debug_print(antitodes, max_p, points):
-    for y in range(max_p.y):
-        for x in range(max_p.x):
-            p = Point(x, y)
-            if p in antitodes:
-                print("#", end="")
-            elif p in points:
-                print(points[p], end="")
-            else:
-                print(".", end="")
-        print()
+def part_1(antennas: Dict[str, Set[Point]], p_max: Point) -> int:
+    return solve(antennas, p_max, part2=False)
 
 
-def part_2(antennas, max_p, points):
-    return solve(antennas, max_p, part2=True)
-
-
-def solve(antennas, max_p, part2):
-    antitodes = set()
-    for freq, locs in antennas.items():
-        for c in combinations(locs, r=2):
-            ants = find_antitodes(c[0], c[1], max_p, part2=part2)
-            antitodes.update(ants)
-    return len(antitodes)
+def part_2(antennas: Dict[str, Set[Point]], p_max: Point) -> int:
+    return solve(antennas, p_max, part2=True)
 
 
 def main():
     lines = get_lines("input_08.txt")
-    antennas, max_p, points = parse_input(lines)
-    print("Part 1:", part_1(antennas, max_p, points))
-    print("Part 2:", part_2(antennas, max_p, points))
+    antennas, p_max = parse_input(lines)
+    print("Part 1:", part_1(antennas, p_max))
+    print("Part 2:", part_2(antennas, p_max))
 
 
 if __name__ == '__main__':

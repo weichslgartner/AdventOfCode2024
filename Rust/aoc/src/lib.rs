@@ -62,3 +62,20 @@ pub fn parse_ints<T: FromStr, const SPLIT_CHAR: char>(input: &str) -> Result<Vec
         .map(|line| line_to_int::<T,SPLIT_CHAR>(line))
         .collect()
 }
+
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Point {
+    pub x: usize,
+    pub y: usize,
+}
+
+impl Point {
+    pub fn new(x: usize, y: usize) -> Self {
+        Self { x, y }
+    }
+}
+
+pub fn is_in_grid(p: Point, p_max: Point) -> bool {
+    p.x < p_max.x && p.y < p_max.y
+}
