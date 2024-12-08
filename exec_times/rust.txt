@@ -1,6 +1,7 @@
 ~/githubprojects/AdventOfCode2024 ~/githubprojects/AdventOfCode2024
 day_01
-[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.03s
+[1m[32m   Compiling[0m day_01 v0.1.0 (/home/andreas/githubprojects/AdventOfCode2024/Rust/day_01)
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.34s
 Part 1: 1882714
 Part 2: 19437052
 
@@ -9,21 +10,22 @@ user	0m0,001s
 sys	0m0,000s
 
 day_02
-[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.01s
+[1m[32m   Compiling[0m day_02 v0.1.0 (/home/andreas/githubprojects/AdventOfCode2024/Rust/day_02)
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.26s
 Part 1: 479
 Part 2: 531
 
 real	0m0,002s
-user	0m0,000s
-sys	0m0,002s
+user	0m0,002s
+sys	0m0,000s
 
 day_03
 [1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.01s
 Part 1: 187825547
 Part 2: 85508223
 
-real	0m0,002s
-user	0m0,002s
+real	0m0,009s
+user	0m0,003s
 sys	0m0,000s
 
 day_04
@@ -31,14 +33,43 @@ day_04
 Part 1: 2685
 Part 2: 2048
 
-real	0m0,004s
+real	0m0,005s
 user	0m0,004s
 sys	0m0,000s
 
 day_05
-[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.01s
+[1m[32m   Compiling[0m day_05 v0.1.0 (/home/andreas/githubprojects/AdventOfCode2024/Rust/day_05)
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.45s
 Part 1: 4814
 Part 2: 5448
+
+real	0m0,002s
+user	0m0,002s
+sys	0m0,000s
+
+day_06
+[1m[32m   Compiling[0m day_06 v0.1.0 (/home/andreas/githubprojects/AdventOfCode2024/Rust/day_06)
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.30s
+Part 1: 4819
+Part 2: 1796
+
+real	0m1,767s
+user	0m1,739s
+sys	0m0,028s
+
+day_07
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.01s
+Part 1: 267566105056
+Part 2: 116094961956019
+
+real	0m0,339s
+user	0m0,338s
+sys	0m0,000s
+
+day_08
+[1m[32m    Finished[0m ]8;;https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles\`release` profile [optimized]]8;;\ target(s) in 0.01s
+Part 1: 259
+Part 2: 927
 
 real	0m0,002s
 user	0m0,002s
