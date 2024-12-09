@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Dict, Optional
 
 from aoc import input_as_str
 
 
-def parse_input(disk_map: str) -> List:
-    id = 0
+def parse_input(disk_map: str) -> (List[int | str], Dict[int, int], Dict[int, int]):
+    block_id = 0
     res = []
     is_id = True
     free_space = {}
@@ -13,8 +13,8 @@ def parse_input(disk_map: str) -> List:
         if is_id:
             blocks[len(res)] = int(c)
             for _ in range(int(c)):
-                res.append(id)
-            id += 1
+                res.append(block_id)
+            block_id += 1
         else:
             free_space[len(res)] = int(c)
             for _ in range(int(c)):
@@ -23,35 +23,42 @@ def parse_input(disk_map: str) -> List:
     return res, free_space, blocks
 
 
-def checksum(disk):
+def checksum(disk: List[int | str]) -> int:
     return sum(i * c if c != '.' else 0 for i, c in enumerate(disk))
 
 
-def part_1(disk_map):
-    l = disk_map.index('.')
-    r = len(disk_map) - 1
-    assert disk_map[r] != '.'
-    while l <= r:
-        disk_map[l], disk_map[r] = disk_map[r], disk_map[l]
-        l = disk_map.index('.', l + 1)
-        r -= 1
-        while disk_map[r] == '.':
-            r -= 1
+def part_1(disk_map: List[int | str]) -> int:
+    left = disk_map.index('.')
+    right = len(disk_map) - 1
+    assert disk_map[right] != '.'
+    while left <= right:
+        disk_map[left], disk_map[right] = disk_map[right], disk_map[left]
+        left = disk_map.index('.', left + 1)
+        right -= 1
+        while disk_map[right] == '.':
+            right -= 1
     return checksum(disk_map)
 
 
-def part_2(disk_map, free_space: dict, blocks: dict):
-    for idx, l in reversed(blocks.items()):
-        target = 0
+def find_target(free_space: Dict[int, int], idx: int, keys: List[int], length: int) -> Optional[int]:
+    for target, key in enumerate(keys):
+        if length <= free_space[key]:
+            if idx > key:
+                return target
+            return None
+    return None
+
+
+def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[int, int]) -> int:
+    for idx, length in reversed(blocks.items()):
         keys = sorted(free_space.keys())
-        while target < len(keys) and l > free_space[keys[target]]:
-            target += 1
-        if target < len(keys) and idx > keys[target]:
-            disk_map[keys[target]:keys[target] + l], disk_map[idx:idx + l] = disk_map[idx:idx + l], disk_map[
-                                                                                                    keys[target]:keys[
-                                                                                                        target] + l]
-            if free_space[keys[target]] > l:
-                free_space[keys[target] + l] = free_space[keys[target]] - l
+        target = find_target(free_space, idx, keys, length)
+        if target is not None:  # target < len(keys) and idx > keys[target]
+            # swap block with free space
+            disk_map[keys[target]:keys[target] + length], disk_map[idx:idx + length] = (
+                disk_map[idx:idx + length], disk_map[keys[target]:keys[target] + length])
+            if free_space[keys[target]] > length:
+                free_space[keys[target] + length] = free_space[keys[target]] - length
             del free_space[keys[target]]
     return checksum(disk_map)
 
