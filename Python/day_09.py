@@ -56,13 +56,13 @@ def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[i
     for idx, length in reversed(blocks.items()):
         keys.sort()
         target = find_target(free_space, idx, keys, length)
-        if target is not None:  # target < len(keys) and idx > keys[target]
+        if target is not None:
             # swap block with free space
             disk_map[keys[target]:keys[target] + length], disk_map[idx:idx + length] = (
                 disk_map[idx:idx + length], disk_map[keys[target]:keys[target] + length])
             if free_space[keys[target]] > length:
                 free_space[keys[target] + length] = free_space[keys[target]] - length
-                heapq.heappush(keys,keys[target] + length)
+                heapq.heappush(keys, keys[target] + length)
             keys.remove(keys[target])
     return checksum(disk_map)
 
