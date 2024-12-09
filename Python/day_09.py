@@ -1,3 +1,4 @@
+import bisect
 import heapq
 from typing import List, Dict, Optional
 
@@ -51,10 +52,8 @@ def find_target(free_space: Dict[int, int], idx: int, keys: List[int], length: i
 
 
 def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[int, int]) -> int:
-    keys = list(free_space.keys())
-    heapq.heapify(keys)
+    keys = sorted(free_space.keys())
     for idx, length in reversed(blocks.items()):
-        keys.sort()
         target = find_target(free_space, idx, keys, length)
         if target is not None:
             # swap block with free space
@@ -62,7 +61,7 @@ def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[i
                 disk_map[idx:idx + length], disk_map[keys[target]:keys[target] + length])
             if free_space[keys[target]] > length:
                 free_space[keys[target] + length] = free_space[keys[target]] - length
-                heapq.heappush(keys, keys[target] + length)
+                bisect.insort(keys, keys[target] + length)
             keys.remove(keys[target])
     return checksum(disk_map)
 
