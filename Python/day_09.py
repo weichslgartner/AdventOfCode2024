@@ -1,5 +1,4 @@
 import bisect
-import heapq
 from typing import List, Dict, Optional
 
 from aoc import input_as_str
