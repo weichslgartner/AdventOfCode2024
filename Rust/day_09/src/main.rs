@@ -96,7 +96,6 @@ fn part_2(
                     keys[target] = key + length;
                 } else {
                     keys.remove(target);
-                    free_space.remove(&key);
                 }
             }
         }
