@@ -1,11 +1,12 @@
-use std::collections::BTreeMap;
+use itertools::Itertools;
+use std::collections::{BTreeMap, HashMap};
 
-fn parse_input(disk_map: &str) -> (Vec<isize>, BTreeMap<usize, usize>, BTreeMap<usize, usize>) {
+fn parse_input(disk_map: &str) -> (Vec<isize>, HashMap<usize, usize>, HashMap<usize, usize>) {
     let mut block_id = 0;
     let mut res = Vec::new();
     let mut is_id = true;
-    let mut free_space = BTreeMap::new();
-    let mut blocks = BTreeMap::new();
+    let mut free_space = HashMap::new();
+    let mut blocks = HashMap::new();
 
     for c in disk_map.trim().chars() {
         let count = c.to_digit(10).unwrap() as usize;
@@ -53,7 +54,7 @@ fn part_1(mut disk_map: Vec<isize>) -> usize {
 }
 
 fn find_target(
-    free_space: &BTreeMap<usize, usize>,
+    free_space: &HashMap<usize, usize>,
     idx: usize,
     keys: &[usize],
     length: usize,
@@ -73,12 +74,18 @@ fn find_target(
 
 fn part_2(
     mut disk_map: Vec<isize>,
-    mut free_space: BTreeMap<usize, usize>,
-    blocks: BTreeMap<usize, usize>,
+    mut free_space: HashMap<usize, usize>,
+    blocks: HashMap<usize, usize>,
 ) -> usize {
-    let mut keys: Vec<_> = free_space.keys().cloned().collect();
-    for (&idx, &length) in blocks.iter().rev() {
-        if let Some(target) = find_target(&free_space, idx, &keys, length) {
+    let mut keys: Vec<_> = free_space.keys().cloned().sorted().collect();
+    for (idx, length) in blocks
+        .into_iter()
+        .collect::<Vec<(usize, usize)>>()
+        .iter()
+        .sorted()
+        .rev()
+    {
+        if let Some(target) = find_target(&free_space, *idx, &keys, *length) {
             let key = keys[target];
             {
                 let s = key + length;
@@ -86,14 +93,13 @@ fn part_2(
                 left[key..key + length].swap_with_slice(&mut right[idx - s..idx + length - s]);
             }
             if let Some(&space) = free_space.get(&key) {
-                if space > length {
+                if space > *length {
                     free_space.insert(key + length, space - length);
                     keys[target] = key + length;
-                }else{
+                } else {
                     keys.remove(target);
                     free_space.remove(&key);
-                } 
-                
+                }
             }
         }
     }
