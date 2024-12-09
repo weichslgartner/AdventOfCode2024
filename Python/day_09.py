@@ -1,3 +1,4 @@
+import heapq
 from typing import List, Dict, Optional
 
 from aoc import input_as_str
@@ -50,8 +51,10 @@ def find_target(free_space: Dict[int, int], idx: int, keys: List[int], length: i
 
 
 def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[int, int]) -> int:
+    keys = list(free_space.keys())
+    heapq.heapify(keys)
     for idx, length in reversed(blocks.items()):
-        keys = sorted(free_space.keys())
+        keys.sort()
         target = find_target(free_space, idx, keys, length)
         if target is not None:  # target < len(keys) and idx > keys[target]
             # swap block with free space
@@ -59,7 +62,8 @@ def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[i
                 disk_map[idx:idx + length], disk_map[keys[target]:keys[target] + length])
             if free_space[keys[target]] > length:
                 free_space[keys[target] + length] = free_space[keys[target]] - length
-            del free_space[keys[target]]
+                heapq.heappush(keys,keys[target] + length)
+            keys.remove(keys[target])
     return checksum(disk_map)
 
 
