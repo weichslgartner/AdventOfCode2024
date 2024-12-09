@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 
 fn parse_input(disk_map: &str) -> (Vec<isize>, HashMap<usize, usize>, HashMap<usize, usize>) {
     let mut block_id = 0;
@@ -77,10 +77,8 @@ fn part_2(
     mut free_space: HashMap<usize, usize>,
     blocks: HashMap<usize, usize>,
 ) -> usize {
-    let mut keys: Vec<_> = free_space.keys().cloned().sorted().collect();
+    let mut keys: Vec<usize> = free_space.keys().cloned().sorted().collect();
     for (idx, length) in blocks
-        .into_iter()
-        .collect::<Vec<(usize, usize)>>()
         .iter()
         .sorted()
         .rev()
