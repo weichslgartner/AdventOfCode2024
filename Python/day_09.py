@@ -7,18 +7,15 @@ def parse_input(disk_map: str) -> (List[int | str], Dict[int, int], Dict[int, in
     block_id = 0
     res = []
     is_id = True
-    free_space = {}
-    blocks = {}
-    for c in disk_map:
+    free_space, blocks = {}, {}
+    for c in map(int, disk_map):
         if is_id:
-            blocks[len(res)] = int(c)
-            for _ in range(int(c)):
-                res.append(block_id)
+            blocks[len(res)] = c
+            res += [block_id] * c
             block_id += 1
         else:
-            free_space[len(res)] = int(c)
-            for _ in range(int(c)):
-                res.append('.')
+            free_space[len(res)] = c
+            res += ['.'] * c
         is_id = not is_id
     return res, free_space, blocks
 
@@ -42,7 +39,7 @@ def part_1(disk_map: List[int | str]) -> int:
 
 def find_target(free_space: Dict[int, int], idx: int, keys: List[int], length: int) -> Optional[int]:
     for target, key in enumerate(keys):
-        if key <=0:
+        if key <= 0:
             continue
         if length <= free_space[key]:
             if idx > key:
