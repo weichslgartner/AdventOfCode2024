@@ -1,4 +1,3 @@
-import bisect
 from typing import List, Dict, Optional
 
 from aoc import input_as_str
@@ -43,6 +42,8 @@ def part_1(disk_map: List[int | str]) -> int:
 
 def find_target(free_space: Dict[int, int], idx: int, keys: List[int], length: int) -> Optional[int]:
     for target, key in enumerate(keys):
+        if key <=0:
+            continue
         if length <= free_space[key]:
             if idx > key:
                 return target
@@ -60,8 +61,9 @@ def part_2(disk_map: List[int | str], free_space: Dict[int, int], blocks: Dict[i
                 disk_map[idx:idx + length], disk_map[keys[target]:keys[target] + length])
             if free_space[keys[target]] > length:
                 free_space[keys[target] + length] = free_space[keys[target]] - length
-                bisect.insort(keys, keys[target] + length)
-            keys.remove(keys[target])
+                keys[target] = keys[target] + length
+            else:
+                keys.remove(keys[target])
     return checksum(disk_map)
 
 

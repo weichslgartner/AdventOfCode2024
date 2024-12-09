@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-fn parse_input(disk_map: &str) -> (Vec<String>, BTreeMap<usize, usize>, BTreeMap<usize, usize>) {
+fn parse_input(disk_map: &str) -> (Vec<isize>, BTreeMap<usize, usize>, BTreeMap<usize, usize>) {
     let mut block_id = 0;
     let mut res = Vec::new();
     let mut is_id = true;
@@ -12,13 +12,13 @@ fn parse_input(disk_map: &str) -> (Vec<String>, BTreeMap<usize, usize>, BTreeMap
         if is_id {
             blocks.insert(res.len(), count);
             for _ in 0..count {
-                res.push(block_id.to_string());
+                res.push(block_id);
             }
             block_id += 1;
         } else {
             free_space.insert(res.len(), count);
             for _ in 0..count {
-                res.push(".".to_string());
+                res.push(-1);
             }
         }
         is_id = !is_id;
@@ -26,20 +26,26 @@ fn parse_input(disk_map: &str) -> (Vec<String>, BTreeMap<usize, usize>, BTreeMap
     (res, free_space, blocks)
 }
 
-fn checksum(disk: &[String]) -> usize {
+fn checksum(disk: &[isize]) -> usize {
     disk.iter()
         .enumerate()
-        .filter_map(|(i, c)| c.parse::<usize>().ok().map(|v| i * v))
+        .filter_map(|(i, c)| if *c >= 0 { Some(i * *c as usize) } else { None })
         .sum()
 }
 
-fn part_1(mut disk_map: Vec<String>) -> usize {
-    let mut left = disk_map.iter().position(|c| c == ".").unwrap();
+fn part_1(mut disk_map: Vec<isize>) -> usize {
+    let mut left = disk_map.iter().position(|c| *c == -1).unwrap();
     let mut right = disk_map.len() - 1;
     while left <= right {
         disk_map.swap(left, right);
-        left = disk_map.iter().skip(left + 1).position(|c| c == ".").unwrap_or(disk_map.len()) + left + 1;
-        while right > 0 && disk_map[right] == "." {
+        left = disk_map
+            .iter()
+            .skip(left + 1)
+            .position(|c| *c == -1)
+            .unwrap_or(disk_map.len())
+            + left
+            + 1;
+        while right > 0 && disk_map[right] == -1 {
             right -= 1;
         }
     }
@@ -66,7 +72,7 @@ fn find_target(
 }
 
 fn part_2(
-    mut disk_map: Vec<String>,
+    mut disk_map: Vec<isize>,
     mut free_space: BTreeMap<usize, usize>,
     blocks: BTreeMap<usize, usize>,
 ) -> usize {
@@ -77,24 +83,22 @@ fn part_2(
             {
                 let s = key + length;
                 let (left, right) = disk_map.split_at_mut(s);
-                left[key..key + length].swap_with_slice(&mut right[idx-s..idx + length-s]);
+                left[key..key + length].swap_with_slice(&mut right[idx - s..idx + length - s]);
             }
             if let Some(&space) = free_space.get(&key) {
                 if space > length {
                     free_space.insert(key + length, space - length);
-                    let new_key = key + length;
-                    match keys.binary_search(&new_key) {
-                        Ok(_) => {} // element already insert, shouldn't happen  
-                        Err(pos) => keys.insert(pos, new_key),
-                    }
-                }
-                free_space.remove(&key);
+                    keys[target] = key + length;
+                }else{
+                    keys.remove(target);
+                    free_space.remove(&key);
+                } 
+                
             }
         }
     }
     checksum(&disk_map)
 }
-
 
 fn main() {
     let input = include_str!("../../../inputs/input_09.txt");
@@ -102,4 +106,3 @@ fn main() {
     println!("Part 1: {}", part_1(disk_map.clone()));
     println!("Part 2: {}", part_2(disk_map, free_space, blocks));
 }
-
