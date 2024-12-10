@@ -68,10 +68,8 @@ fn solve(points: &HashMap<Point, i32>, starts: &Vec<Point>, p_max: Point) -> (us
 fn main() {
     let input = include_str!("../../../inputs/input_10.txt");
     let lines: Vec<&str> = input.lines().collect();
-
     let (points, starts, p_max) = parse_input(lines);
     let (part1, part2) = solve(&points, &starts, p_max);
-
     println!("Part 1: {}", part1);
     println!("Part 2: {}", part2);
 }
