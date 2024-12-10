@@ -118,3 +118,13 @@ impl Point {
 pub fn is_in_grid(p: Point, p_max: Point) -> bool {
     p.x >= 0 && p.y >= 0 && p.x < p_max.x && p.y < p_max.y
 }
+
+
+pub fn get_neighbours_4(p: Point, p_max: Point) -> Vec<Point> {
+    let mut neighbours = Vec::new();
+    if p.x > 0 { neighbours.push(Point { x: p.x - 1, y: p.y }); }
+    if p.y > 0 { neighbours.push(Point { x: p.x, y: p.y - 1 }); }
+    if p.x + 1 < p_max.x { neighbours.push(Point { x: p.x + 1, y: p.y }); }
+    if p.y + 1 < p_max.y { neighbours.push(Point { x: p.x, y: p.y + 1 }); }
+    neighbours
+}

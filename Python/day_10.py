@@ -1,9 +1,9 @@
-from typing import Set, Dict, List
+from typing import Dict, List
 
 from aoc import Point, get_lines, get_neighbours_4
 
 
-def parse_input(lines: List[str]) -> (Dict[str, Set[Point]], Point):
+def parse_input(lines: List[str]) -> (Dict[Point, int], List[Point], Point):
     points = {}
     starts = []
     for y, line in enumerate(lines):
@@ -15,22 +15,22 @@ def parse_input(lines: List[str]) -> (Dict[str, Set[Point]], Point):
     return points, starts, Point(x=len(lines[0]), y=len(lines))
 
 
-def solve(points, starts, p_max):
+def solve(points: Dict[Point, int], starts: List[Point], p_max: Point) -> (int, int):
     return tuple(sum(x) for x in zip(*map(lambda p: get_n_trailheads(p, p_max, points), starts)))
 
 
-def get_n_trailheads(p, p_max, points):
+def get_n_trailheads(p: Point, p_max: Point, points: Dict[Point, int]) -> (int, int):
     cur, next_ps = [p], []
     heads = set()
     score = 0
     while len(cur) > 0:
         for p in cur:
-            for n in get_neighbours_4(p, p_max):
-                if n in points and points[n] - points[p] == 1:
+            for n in filter(lambda x: x in points and points[x] - points[p] == 1, get_neighbours_4(p, p_max)):
+                if points[n] == 9:
+                    heads.add(n)
+                    score += 1
+                else:
                     next_ps.append(n)
-                    if points[n] == 9:
-                        heads.add(n)
-                        score += 1
         cur, next_ps = next_ps, []
     return len(heads), score
 
