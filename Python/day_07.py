@@ -11,7 +11,7 @@ def parse_input(lines):
 
 
 def concat(a: int, b: int) -> int:
-    return a*10**(math.floor(math.log10(b))+1)+b
+    return a * 10 ** (math.floor(math.log10(b)) + 1) + b
 
 
 def can_be_solved(cur: int, numbers: Tuple[int], idx: int, ops) -> bool:
