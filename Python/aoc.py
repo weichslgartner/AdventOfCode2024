@@ -18,15 +18,11 @@ class DirectionStr(StrEnum):
     WEST = "<"
 
 
-
-
 class Direction(Enum):
     NORTH = 0
     EAST = 1
     SOUTH = 2
     WEST = 3
-
-
 
 
 def dir_to_str(direction: Direction) -> str:

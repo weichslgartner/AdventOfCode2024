@@ -1,6 +1,7 @@
 import math
+from typing import List
 
-from aoc import *
+from aoc import extract_all_ints, input_as_str
 from functools import cache
 
 
@@ -19,10 +20,10 @@ def transform_stone(i: int) -> List[int]:
 
 
 @cache
-def convert_number(num: int, times: int) -> int:
-    if times == 0:
+def convert_number(num: int, n_iter: int) -> int:
+    if n_iter == 0:
         return 1
-    return sum(map(lambda i: convert_number(i, times - 1), transform_stone(num)))
+    return sum(map(lambda i: convert_number(i, n_iter - 1), transform_stone(num)))
 
 
 def solve(nums: List[int], n_iter: int) -> int:
