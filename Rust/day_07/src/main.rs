@@ -13,8 +13,7 @@ fn parse_input(input: &str) -> Vec<Vec<u64>> {
 }
 
 fn concat(a: u64, b: u64) -> u64 {
-    let combined = format!("{}{}", a, b);
-    combined.parse::<u64>().unwrap()
+    a*10u64.pow(((b as f32).log10().floor() as u32) + 1)+b
 }
 
 fn can_be_solved(cur: u64, numbers: &Vec<u64>, idx: usize, ops: &Vec<fn(u64, u64) -> u64>) -> bool {

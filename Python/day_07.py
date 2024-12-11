@@ -1,16 +1,17 @@
+import math
 import operator
 import re
-from typing import List, Tuple
+from typing import Tuple
 
-from aoc import get_lines, extract_all_ints
+from aoc import get_lines
 
 
 def parse_input(lines):
     return [tuple(map(int, (re.findall(r'-?\d+', line)))) for line in lines]
 
 
-def concat(a: str, b: str) -> int:
-    return int(str(a) + str(b))
+def concat(a: int, b: int) -> int:
+    return a*10**(math.floor(math.log10(b))+1)+b
 
 
 def can_be_solved(cur: int, numbers: Tuple[int], idx: int, ops) -> bool:

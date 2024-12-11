@@ -68,7 +68,7 @@ def main():
     lines = input_as_str("input_09.txt")
     disk_map, free_space, blocks = parse_input(lines)
     print("Part 1:", part_1(disk_map.copy()))
-    print("Part 2:", part_2(disk_map, free_space, blocks))  # 8509897721111 too high
+    print("Part 2:", part_2(disk_map, free_space, blocks))
 
 
 if __name__ == '__main__':
