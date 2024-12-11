@@ -67,8 +67,7 @@ fn parse_input(lines: Vec<&str>) -> (HashSet<Point>, Point, Point) {
     )
 }
 
-
-fn solve(obstacles: &mut HashSet<Point>, start: Point, max_p: Point) -> (usize,usize) {
+fn solve(obstacles: &mut HashSet<Point>, start: Point, max_p: Point) -> (usize, usize) {
     let mut cur = start;
     let mut new_obstacles = HashSet::new();
     let mut dir = Direction::North;
@@ -86,7 +85,7 @@ fn solve(obstacles: &mut HashSet<Point>, start: Point, max_p: Point) -> (usize,u
         cur = next_p;
         dir = new_dir;
     }
-    (visited.len(),new_obstacles.len())
+    (visited.len(), new_obstacles.len())
 }
 
 fn has_loops(mut cur: Point, mut dir: Direction, max_p: Point, obstacles: &HashSet<Point>) -> bool {
@@ -130,7 +129,7 @@ fn main() {
     let input = include_str!("../../../inputs/input_06.txt");
     let lines: Vec<&str> = input.lines().collect();
     let (mut obstacles, start, max_p) = parse_input(lines);
-    let (part_1,part_2) = solve(&mut obstacles, start, max_p);
+    let (part_1, part_2) = solve(&mut obstacles, start, max_p);
     println!("Part 1: {}", part_1);
     println!("Part 2: {}", part_2);
 }

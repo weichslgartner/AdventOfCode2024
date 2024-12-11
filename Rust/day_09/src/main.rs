@@ -78,11 +78,7 @@ fn part_2(
     blocks: HashMap<usize, usize>,
 ) -> usize {
     let mut keys: Vec<usize> = free_space.keys().cloned().sorted().collect();
-    for (idx, length) in blocks
-        .iter()
-        .sorted()
-        .rev()
-    {
+    for (idx, length) in blocks.iter().sorted().rev() {
         if let Some(target) = find_target(&free_space, *idx, &keys, *length) {
             let key = keys[target];
             {

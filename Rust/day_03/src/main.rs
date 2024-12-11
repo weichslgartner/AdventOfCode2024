@@ -20,7 +20,7 @@ fn parse_input(line: &str) -> Vec<Instruction> {
                 .map_or(0, |m| m.as_str().parse::<i32>().unwrap_or(0)),
             second_num: cap
                 .get(5)
-                .map_or(0, |m| m.as_str().parse::<i32>().unwrap_or(0))
+                .map_or(0, |m| m.as_str().parse::<i32>().unwrap_or(0)),
         })
         .collect()
 }

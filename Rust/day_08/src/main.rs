@@ -5,21 +5,22 @@ use std::collections::{HashMap, HashSet};
 fn parse_input(input: &str) -> (HashMap<char, HashSet<Point>>, Point) {
     let mut max_y: isize = 0;
     let mut max_x: isize = 0;
-    let antennas: HashMap<char, HashSet<Point>> = input
-        .lines()
-        .enumerate()
-        .fold(HashMap::new(), |mut acc, (y, line)| {
-            line.chars().enumerate().for_each(|(x, c)| {
-                max_x = max_x.max(x as isize);
-                max_y = max_y.max(y as isize);
-                if !("#.".contains(c)) {
-                    acc.entry(c)
-                        .or_default()
-                        .insert(Point::new(x as isize, y as isize));
-                }
+    let antennas: HashMap<char, HashSet<Point>> =
+        input
+            .lines()
+            .enumerate()
+            .fold(HashMap::new(), |mut acc, (y, line)| {
+                line.chars().enumerate().for_each(|(x, c)| {
+                    max_x = max_x.max(x as isize);
+                    max_y = max_y.max(y as isize);
+                    if !("#.".contains(c)) {
+                        acc.entry(c)
+                            .or_default()
+                            .insert(Point::new(x as isize, y as isize));
+                    }
+                });
+                acc
             });
-            acc
-        });
     (antennas, Point::new(max_x + 1, max_y + 1))
 }
 

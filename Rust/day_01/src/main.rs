@@ -5,7 +5,7 @@ fn parse_input(input: &str) -> Result<(Vec<i64>, Vec<i64>)> {
     input
         .lines()
         .map(|line| {
-            aoc::line_to_int::<i64, ' '>(line)?                
+            aoc::line_to_int::<i64, ' '>(line)?
                 .into_iter()
                 .collect_tuple()
                 .context("Failed to convert line to tuple")
