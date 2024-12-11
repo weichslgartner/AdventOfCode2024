@@ -2,32 +2,32 @@ Python/day_01.py
 Part 1: 1882714
 Part 2: 19437052
 
-real	0m0,047s
-user	0m0,043s
-sys	0m0,004s
+real	0m0,030s
+user	0m0,023s
+sys	0m0,007s
 
 Python/day_02.py
 Part 1: 479
 Part 2: 531
 
-real	0m0,049s
-user	0m0,044s
-sys	0m0,004s
+real	0m0,045s
+user	0m0,045s
+sys	0m0,000s
 
 Python/day_03.py
 Part 1: 187825547
 Part 2: 85508223
 
-real	0m0,030s
-user	0m0,030s
-sys	0m0,000s
+real	0m0,033s
+user	0m0,029s
+sys	0m0,004s
 
 Python/day_04.py
 Part 1: 2685
 Part 2: 2048
 
-real	0m0,155s
-user	0m0,151s
+real	0m0,163s
+user	0m0,159s
 sys	0m0,004s
 
 Python/day_05.py
@@ -35,54 +35,54 @@ Part 1: 4814
 Part 2: 5448
 
 real	0m0,036s
-user	0m0,035s
+user	0m0,036s
 sys	0m0,000s
 
 Python/day_06.py
 Part 1: 0
 Part 2: 1796
 
-real	0m27,515s
-user	0m27,446s
-sys	0m0,016s
+real	0m26,452s
+user	0m26,422s
+sys	0m0,008s
 
 Python/day_07.py
 Part 1: 267566105056
 Part 2: 116094961956019
 
-real	0m2,831s
-user	0m2,815s
-sys	0m0,008s
+real	0m2,237s
+user	0m2,232s
+sys	0m0,000s
 
 Python/day_08.py
 Part 1: 259
 Part 2: 927
 
-real	0m0,041s
-user	0m0,032s
-sys	0m0,004s
+real	0m0,030s
+user	0m0,023s
+sys	0m0,008s
 
 Python/day_09.py
 Part 1: 6337367222422
 Part 2: 6361380647183
 
-real	0m0,594s
-user	0m0,584s
-sys	0m0,008s
+real	0m0,563s
+user	0m0,559s
+sys	0m0,004s
 
 Python/day_10.py
 Part 1: 698
 Part 2: 1436
 
-real	0m0,063s
-user	0m0,049s
-sys	0m0,008s
+real	0m0,052s
+user	0m0,052s
+sys	0m0,000s
 
 Python/day_11.py
 Part 1: 188902
 Part 2: 223894720281135
 
-real	0m0,220s
-user	0m0,180s
-sys	0m0,040s
+real	0m0,223s
+user	0m0,187s
+sys	0m0,036s
 
