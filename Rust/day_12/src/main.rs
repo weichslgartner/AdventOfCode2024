@@ -95,14 +95,14 @@ fn solve(regions: HashMap<char, HashSet<Point>>) -> (i32, i32) {
         .collect();
     new_regions
         .par_iter()
-        .map(|points| (points.len() as i32, eval_region(&points)))
-        .fold(
-            || (0, 0),
-            |accu, (l, (n, perimeter))| (accu.0 + l * perimeter, accu.1 + l * n),
-        )
+        .map(|points| {
+            let l = points.len() as i32;
+            let (n, perimeter) = eval_region(points);
+            (l * perimeter, l * n) 
+        })
         .reduce(
             || (0, 0),
-            |accu1, accu2| (accu1.0 + accu2.0, accu1.1 + accu2.1),
+            |accu, value| (accu.0 + value.0, accu.1 + value.1),
         )
 }
 
