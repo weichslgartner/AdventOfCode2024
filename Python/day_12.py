@@ -61,18 +61,6 @@ def add_to_sides(new_perimeter: Set[Point], p: Point, sides: Tuple[Any, Any]):
             heapq.heappush(sides[1][(n.x, p.x)], p.y)
 
 
-def eval_region(points: Set[Point]) -> (int, int):
-    perimeter = 0
-    # n_corners = 0
-    sides = (defaultdict(list), defaultdict(list))
-    for p in points:
-        new_perimeter = get_neighbours_4(p).difference(points)
-        perimeter += len(new_perimeter)
-        add_to_sides(new_perimeter, p, sides)
-        # n_corners += cnt_corners(p, points)
-    return calc_sides(sides), perimeter
-
-
 def calc_sides(sides: Tuple[defaultdict[list], defaultdict[list]]):
     n_v = 0
     for side in sides:
@@ -84,6 +72,18 @@ def calc_sides(sides: Tuple[defaultdict[list], defaultdict[list]]):
                     n_v += 1
                 prev = s
     return n_v
+
+
+def eval_region(points: Set[Point]) -> (int, int):
+    perimeter = 0
+    # n_corners = 0
+    sides = (defaultdict(list), defaultdict(list))
+    for p in points:
+        new_perimeter = get_neighbours_4(p).difference(points)
+        perimeter += len(new_perimeter)
+        add_to_sides(new_perimeter, p, sides)
+        # n_corners += cnt_corners(p, points)
+    return calc_sides(sides), perimeter
 
 
 def solve(regions: Dict[str, Set[Point]]) -> (int, int):
