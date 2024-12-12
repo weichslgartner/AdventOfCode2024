@@ -11,7 +11,7 @@ fn transform_stone(i: i64) -> Vec<i64> {
     if i == 0 {
         return vec![1];
     }
-    let length = i.ilog10()  + 1;
+    let length = i.ilog10() + 1;
     if length % 2 == 0 {
         let half_pow = 10_i64.pow(length / 2);
         vec![i / half_pow, i % half_pow]
