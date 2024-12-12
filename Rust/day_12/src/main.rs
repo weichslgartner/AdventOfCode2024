@@ -1,5 +1,6 @@
 use std::collections::{HashSet, HashMap};
 use aoc::Point;
+type SideType = (HashMap<(isize, isize), Vec<isize>>, HashMap<(isize, isize), Vec<isize>>) ;
 
 fn parse_input(input: &str) -> HashMap<char, HashSet<Point>> {
     let mut regions: HashMap<char, HashSet<Point>> = HashMap::new();
@@ -39,7 +40,7 @@ fn partition(mut points: HashSet<Point>) -> Vec<HashSet<Point>> {
     res
 }
 
-fn add_to_sides(new_perimeter: &HashSet<Point>, p: Point, sides: &mut (HashMap<(isize, isize), Vec<isize>>, HashMap<(isize, isize), Vec<isize>>)) {
+fn add_to_sides(new_perimeter: &HashSet<Point>, p: Point, sides: &mut SideType) {
     for n in new_perimeter {
         if n.x == p.x {
             sides.0.entry((n.y, p.y)).or_default().push(p.x);
@@ -50,7 +51,7 @@ fn add_to_sides(new_perimeter: &HashSet<Point>, p: Point, sides: &mut (HashMap<(
     }
 }
 
-fn calc_sides(sides: &(HashMap<(isize, isize), Vec<isize>>, HashMap<(isize, isize), Vec<isize>>)) -> i32 {
+fn calc_sides(sides: &SideType) -> i32 {
     let mut n_v = 0;
     for side in [&sides.0, &sides.1] {
         for q in side.values() {
@@ -70,7 +71,7 @@ fn calc_sides(sides: &(HashMap<(isize, isize), Vec<isize>>, HashMap<(isize, isiz
 
 fn eval_region(points: &HashSet<Point>) -> (i32, i32) {
     let mut perimeter = 0;
-    let mut sides: (HashMap<(isize, isize), Vec<isize>>, HashMap<(isize, isize), Vec<isize>>) = (HashMap::new(), HashMap::new());
+    let mut sides: SideType = (HashMap::new(), HashMap::new());
     for &p in points {
         let new_perimeter: HashSet<Point> = get_neighbours_4(p).difference(points).cloned().collect();
         perimeter += new_perimeter.len() as i32;
