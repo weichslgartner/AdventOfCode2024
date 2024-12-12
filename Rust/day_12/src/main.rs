@@ -1,12 +1,19 @@
-use std::collections::{HashSet, HashMap};
 use aoc::Point;
-type SideType = (HashMap<(isize, isize), Vec<isize>>, HashMap<(isize, isize), Vec<isize>>) ;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use std::collections::{HashMap, HashSet};
+type SideType = (
+    HashMap<(isize, isize), Vec<isize>>,
+    HashMap<(isize, isize), Vec<isize>>,
+);
 
 fn parse_input(input: &str) -> HashMap<char, HashSet<Point>> {
     let mut regions: HashMap<char, HashSet<Point>> = HashMap::new();
     for (y, line) in input.lines().enumerate() {
         for (x, c) in line.chars().enumerate() {
-            regions.entry(c).or_default().insert(Point::new(x as isize, y as isize));
+            regions
+                .entry(c)
+                .or_default()
+                .insert(Point::new(x as isize, y as isize));
         }
     }
     regions
@@ -28,7 +35,7 @@ fn partition(mut points: HashSet<Point>) -> Vec<HashSet<Point>> {
         let mut queue: Vec<Point> = get_neighbours_4(p).intersection(&points).cloned().collect();
         let mut region = HashSet::new();
         region.insert(p);
-        
+
         while let Some(q) = queue.pop() {
             if points.remove(&q) {
                 region.insert(q);
@@ -73,7 +80,8 @@ fn eval_region(points: &HashSet<Point>) -> (i32, i32) {
     let mut perimeter = 0;
     let mut sides: SideType = (HashMap::new(), HashMap::new());
     for &p in points {
-        let new_perimeter: HashSet<Point> = get_neighbours_4(p).difference(points).cloned().collect();
+        let new_perimeter: HashSet<Point> =
+            get_neighbours_4(p).difference(points).cloned().collect();
         perimeter += new_perimeter.len() as i32;
         add_to_sides(&new_perimeter, p, &mut sides);
     }
@@ -85,15 +93,17 @@ fn solve(regions: HashMap<char, HashSet<Point>>) -> (i32, i32) {
         .values()
         .flat_map(|region| partition(region.clone()))
         .collect();
-
-    let mut part1 = 0;
-    let mut part2 = 0;
-    for points in new_regions {
-        let (n, perimeter) = eval_region(&points);
-        part1 += points.len() as i32 * perimeter;
-        part2 += points.len() as i32 * n;
-    }
-    (part1, part2)
+    new_regions
+        .par_iter()
+        .map(|points| (points.len() as i32, eval_region(&points)))
+        .fold(
+            || (0, 0),
+            |accu, (l, (n, perimeter))| (accu.0 + l * perimeter, accu.1 + l * n),
+        )
+        .reduce(
+            || (0, 0),
+            |accu1, accu2| (accu1.0 + accu2.0, accu1.1 + accu2.1),
+        )
 }
 
 fn main() {
@@ -103,4 +113,3 @@ fn main() {
     println!("Part 1: {}", part1);
     println!("Part 2: {}", part2);
 }
-

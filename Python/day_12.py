@@ -76,13 +76,13 @@ def calc_sides(sides: Tuple[defaultdict[list], defaultdict[list]]):
 
 def eval_region(points: Set[Point]) -> (int, int):
     perimeter = 0
-    # n_corners = 0
+    #n_corners = 0
     sides = (defaultdict(list), defaultdict(list))
     for p in points:
         new_perimeter = get_neighbours_4(p).difference(points)
         perimeter += len(new_perimeter)
         add_to_sides(new_perimeter, p, sides)
-        # n_corners += cnt_corners(p, points)
+        #n_corners += cnt_corners(p, points)
     return calc_sides(sides), perimeter
 
 
