@@ -58,8 +58,7 @@ fn part_2(machines: &[Vec<Point>]) -> isize {
 
 fn main() {
     let input = include_str!("../../../inputs/input_13.txt");
-    let machines = parse_input(&input);
-
+    let machines = parse_input(input);
     println!("Part 1: {}", part_1(&machines));
     println!("Part 2: {}", part_2(&machines));
 }
