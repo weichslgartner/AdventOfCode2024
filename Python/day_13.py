@@ -23,8 +23,8 @@ def solve(a: Point, b: Point, target: Point) -> int:
     dividend = (b.y * a.x - b.x * a.y)
     if target_diff % dividend != 0:
         return 0
-    a_times = int(target_diff / dividend)
-    b_times = int((target.y - a_times * a.y) / b.y)
+    a_times = target_diff // dividend
+    b_times = (target.y - a_times * a.y) // b.y
     return a_times * COST_A + b_times * COST_B
 
 
