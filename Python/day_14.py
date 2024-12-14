@@ -23,14 +23,11 @@ def part_1(points, steps=100):
 
 
 def perform_movement(points, steps):
-    for i, p in enumerate(points):
-        points[i] = (Point(x=(p[0].x + p[1].x * steps) % WIDTH, y=(p[0].y + p[1].y * steps) % HEIGHT), p[1])
-    return points
+    return [(Point(x=(p[0].x + p[1].x * steps) % WIDTH, y=(p[0].y + p[1].y * steps) % HEIGHT), p[1]) for p in points]
 
 
 def is_christmas_tree(points):
-    cnt = Counter(map(lambda p: p[0], points))
-    return all(v == 1 for v in cnt.values())
+    return all(v == 1 for v in Counter(map(lambda p: p[0], points)).values())
 
 
 def debug(i, points):
