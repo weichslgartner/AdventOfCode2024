@@ -119,6 +119,33 @@ pub fn is_in_grid(p: Point, p_max: Point) -> bool {
     p.x >= 0 && p.y >= 0 && p.x < p_max.x && p.y < p_max.y
 }
 
+/// Returns the 4-connected neighbors of a given point within a defined maximum boundary.
+///
+/// The neighbors are the points directly adjacent to the input point (up, down, left, and right),
+/// constrained by the boundaries defined by `p_max`.
+///
+/// # Examples
+///
+/// ```
+/// use aoc::{Point, get_neighbours_4};
+/// 
+/// let point = Point { x: 1, y: 1 };
+/// let boundary = Point { x: 3, y: 3 };
+/// let neighbors = get_neighbours_4(point, boundary);
+/// assert_eq!(neighbors, vec![
+///     Point { x: 0, y: 1 },
+///     Point { x: 1, y: 0 },
+///     Point { x: 2, y: 1 },
+///     Point { x: 1, y: 2 }
+/// ]);
+///
+/// let corner_point = Point { x: 0, y: 0 };
+/// let neighbors = get_neighbours_4(corner_point, boundary);
+/// assert_eq!(neighbors, vec![
+///     Point { x: 1, y: 0 },
+///     Point { x: 0, y: 1 }
+/// ]);
+/// ```
 pub fn get_neighbours_4(p: Point, p_max: Point) -> Vec<Point> {
     let mut neighbours = Vec::new();
     if p.x > 0 {
@@ -136,7 +163,32 @@ pub fn get_neighbours_4(p: Point, p_max: Point) -> Vec<Point> {
     neighbours
 }
 
-
+/// Extracts all integers from a given string.
+///
+/// This function scans the input string for integers (including negative values) and returns them as a vector.
+///
+/// # Examples
+///
+/// ```
+/// use aoc::extract_all_ints;
+/// use regex::Regex;
+/// 
+/// let input = "The temperatures are -12, -5, and 14 degrees.";
+/// let result = extract_all_ints(input);
+/// assert_eq!(result, vec![-12, -5, 14]);
+///
+/// let input = "No numbers here!";
+/// let result = extract_all_ints(input);
+/// assert!(result.is_empty());
+/// 
+/// let input = "Mixed 42text and-7numbers33.";
+/// let result = extract_all_ints(input);
+/// assert_eq!(result, vec![42, -7, 33]);
+/// ```
+///
+/// # Panics
+///
+/// This function will panic if the regular expression is invalid, but this is unlikely as the regex pattern is hardcoded.
 pub fn extract_all_ints(line: &str) -> Vec<isize> {
     let re = Regex::new(r"-?\d+").unwrap();
     re.find_iter(line)

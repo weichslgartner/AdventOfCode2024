@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use aoc::extract_all_ints;
 use aoc::Point;
+use itertools::Itertools;
 
 const WIDTH: isize = 101;
 const HEIGHT: isize = 103;
@@ -38,11 +37,12 @@ fn perform_movement(points: &mut [(Point, Point)], steps: isize) {
 }
 
 fn is_christmas_tree(points: &[(Point, Point)]) -> bool {
-    let mut counter = HashMap::new();
-    for (pos, _) in points {
-        *counter.entry(*pos).or_insert(0) += 1;
-    }
-    counter.values().all(|&v| v == 1)
+    points
+        .iter()
+        .map(|(p, _)| p)
+        .counts()
+        .values()
+        .all(|&v| v == 1)
 }
 
 fn calc_quads(points: &[(Point, Point)]) -> [isize; 4] {
