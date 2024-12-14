@@ -1,4 +1,4 @@
-import collections
+from collections import Counter
 from math import prod
 
 from aoc import *
@@ -29,15 +29,12 @@ def perform_movement(points, steps):
 
 
 def is_christmas_tree(points):
-    cnt = collections.Counter(map(lambda p: p[0], points))
-    for v in cnt.values():
-        if v > 1:
-            return False
-    return True
+    cnt = Counter(map(lambda p: p[0], points))
+    return all(v == 1 for v in cnt.values())
 
 
 def debug(i, points):
-    cnt = collections.Counter(map(lambda point: point[0], points))
+    cnt = Counter(map(lambda point: point[0], points))
     for v in cnt.values():
         if v > 1:
             return False
