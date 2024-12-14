@@ -1,20 +1,14 @@
 from collections import Counter
 from math import prod
 
-from aoc import *
+from aoc import get_lines, extract_all_ints, Point
 
 WIDTH = 101
 HEIGHT = 103
 
 
-# WIDTH = 7
-# HEIGHT = 11
 def parse_input(lines):
-    points = []
-    for line in lines:
-        ps = extract_all_ints(line)
-        points.append((Point(*ps[:2]), Point(*ps[2:])))
-    return points
+    return [(Point(*ps[:2]), Point(*ps[2:])) for line in lines for ps in [extract_all_ints(line)]]
 
 
 def part_1(points, steps=100):
@@ -31,16 +25,15 @@ def is_christmas_tree(points):
 
 
 def debug(i, points):
-    cnt = Counter(map(lambda point: point[0], points))
-    for v in cnt.values():
-        if v > 1:
-            return False
+    if not is_christmas_tree(points):
+        return
     print(i, "=========")
+    chirstmas_tree = {map(lambda p_: p_[0], points)}
     for y in range(HEIGHT):
         for x in range(WIDTH):
             p = Point(x, y)
-            if p in cnt:
-                print(cnt[p], end="")
+            if p in chirstmas_tree:
+                print("1", end="")
             else:
                 print(".", end="")
         print()
