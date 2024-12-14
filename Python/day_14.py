@@ -13,8 +13,7 @@ def parse_input(lines: List[str]) -> List[Tuple[Point, Point]]:
 
 
 def part_1(points: List[Tuple[Point, Point]], steps: int = 100) -> int:
-    perform_movement(points, steps)
-    return prod(calc_quads(points))
+    return prod(calc_quads(perform_movement(points, steps)))
 
 
 def perform_movement(points: List[Tuple[Point, Point]], steps: int = 1) -> List[Tuple[Point, Point]]:
@@ -43,18 +42,18 @@ def debug(i: int, points: List[Tuple[Point, Point]]):
 def calc_quads(points: List[Tuple[Point, Point]]) -> List[int]:
     quads = [0] * 4
     for p, _ in points:
-        if p.y < HEIGHT // 2:
-            if p.x < WIDTH // 2:
+        match (p.y < HEIGHT // 2, p.y > HEIGHT // 2, p.x < WIDTH // 2, p.x > WIDTH // 2):
+            case (True, _, True, _):  # Top-left
                 quads[0] += 1
-            elif p.x > WIDTH // 2:
+            case (True, _, _, True):  # Top-right
                 quads[1] += 1
-        elif p.y > HEIGHT // 2:
-            if p.x < WIDTH // 2:
+            case (_, True, True, _):  # Bottom-left
                 quads[2] += 1
-            elif p.x > WIDTH // 2:
+            case (_, True, _, True):  # Bottom-right
                 quads[3] += 1
+            case _:  # Ignore points on boundaries
+                pass
     return quads
-
 
 def part_2(points: List[Tuple[Point, Point]]) -> int:
     for i in range(1_000_000):

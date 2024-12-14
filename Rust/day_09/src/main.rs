@@ -101,7 +101,7 @@ fn part_2(
 
 fn main() {
     let input = include_str!("../../../inputs/input_09.txt");
-    let (disk_map, free_space, blocks) = parse_input(&input);
+    let (disk_map, free_space, blocks) = parse_input(input);
     println!("Part 1: {}", part_1(disk_map.clone()));
     println!("Part 2: {}", part_2(disk_map, free_space, blocks));
 }

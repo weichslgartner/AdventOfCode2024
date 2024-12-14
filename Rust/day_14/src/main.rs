@@ -1,13 +1,10 @@
 use std::collections::HashMap;
-use std::collections::HashSet;
 
 use aoc::extract_all_ints;
 use aoc::Point;
 
 const WIDTH: isize = 101;
 const HEIGHT: isize = 103;
-
-
 
 fn parse_input(input: &str) -> Vec<(Point, Point)> {
     input
@@ -48,22 +45,20 @@ fn is_christmas_tree(points: &[(Point, Point)]) -> bool {
     counter.values().all(|&v| v == 1)
 }
 
-
 fn calc_quads(points: &[(Point, Point)]) -> [isize; 4] {
     let mut quads = [0; 4];
     for (p, _) in points {
-        if p.y < HEIGHT / 2 {
-            if p.x < WIDTH / 2 {
-                quads[0] += 1;
-            } else if p.x > WIDTH / 2 {
-                quads[1] += 1;
-            }
-        } else if p.y > HEIGHT / 2 {
-            if p.x < WIDTH / 2 {
-                quads[2] += 1;
-            } else if p.x > WIDTH / 2 {
-                quads[3] += 1;
-            }
+        match (
+            p.y < HEIGHT / 2,
+            p.y > HEIGHT / 2,
+            p.x < WIDTH / 2,
+            p.x > WIDTH / 2,
+        ) {
+            (true, _, true, _) => quads[0] += 1, // Top-left
+            (true, _, _, true) => quads[1] += 1, // Top-right
+            (_, true, true, _) => quads[2] += 1, // Bottom-left
+            (_, true, _, true) => quads[3] += 1, // Bottom-right
+            _ => (),                             // Ignore points on boundaries
         }
     }
     quads
@@ -76,7 +71,7 @@ fn part_2(mut points: Vec<(Point, Point)>) -> isize {
         }
         perform_movement(&mut points, 1);
     }
-    -1 
+    -1
 }
 
 fn main() {
@@ -85,5 +80,3 @@ fn main() {
     println!("Part 1: {}", part_1(points.clone(), 100));
     println!("Part 2: {}", part_2(points));
 }
-
-
