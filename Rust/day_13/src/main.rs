@@ -1,5 +1,4 @@
-use aoc::Point;
-use regex::Regex;
+use aoc::{extract_all_ints, Point};
 
 const COST_A: isize = 3;
 const COST_B: isize = 1;
@@ -21,12 +20,6 @@ fn parse_input(input_str: &str) -> Vec<Vec<Point>> {
         .collect()
 }
 
-fn extract_all_ints(line: &str) -> Vec<isize> {
-    let re = Regex::new(r"-?\d+").unwrap();
-    re.find_iter(line)
-        .filter_map(|mat| mat.as_str().parse::<isize>().ok())
-        .collect()
-}
 
 fn solve(a: &Point, b: &Point, target: &Point) -> isize {
     let target_diff = target.x * b.y - target.y * b.x;

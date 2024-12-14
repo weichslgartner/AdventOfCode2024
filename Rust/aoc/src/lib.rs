@@ -1,4 +1,5 @@
 use anyhow::Result;
+use regex::Regex;
 use std::str::FromStr;
 
 /// Parses a line of text into a vector of values of type `T`, splitting by `SPLIT_CHAR`.
@@ -133,4 +134,12 @@ pub fn get_neighbours_4(p: Point, p_max: Point) -> Vec<Point> {
         neighbours.push(Point { x: p.x, y: p.y + 1 });
     }
     neighbours
+}
+
+
+pub fn extract_all_ints(line: &str) -> Vec<isize> {
+    let re = Regex::new(r"-?\d+").unwrap();
+    re.find_iter(line)
+        .filter_map(|mat| mat.as_str().parse::<isize>().ok())
+        .collect()
 }
