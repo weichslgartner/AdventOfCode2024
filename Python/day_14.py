@@ -28,7 +28,7 @@ def debug(i: int, points: List[Tuple[Point, Point]]):
     if not is_christmas_tree(points):
         return
     print(i, "=========")
-    christmas_tree = {map(lambda p_: p_[0], points)}
+    christmas_tree = {p for p, _ in points}
     for y in range(HEIGHT):
         for x in range(WIDTH):
             p = Point(x, y)
@@ -55,9 +55,11 @@ def calc_quads(points: List[Tuple[Point, Point]]) -> List[int]:
                 pass
     return quads
 
+
 def part_2(points: List[Tuple[Point, Point]]) -> int:
     for i in range(1_000_000):
         if is_christmas_tree(points):
+            # debug(i, points)
             return i
         points = perform_movement(points, 1)
 
@@ -65,7 +67,7 @@ def part_2(points: List[Tuple[Point, Point]]) -> int:
 def main():
     lines = get_lines("input_14.txt")
     points = parse_input(lines)
-    print("Part 1:", part_1(points.copy()))
+    print("Part 1:", part_1(points))
     print("Part 2:", part_2(points))
 
 
