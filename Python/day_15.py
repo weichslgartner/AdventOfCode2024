@@ -38,6 +38,15 @@ def move(walls: Set[Point], boxes_left: Set[Point], boxes_right: Set[Point], rob
     return sum(100 * p.y + p.x for p in boxes_left)
 
 
+def can_move_free(to_add_right: Set[Point], to_add_left: Set[Point], boxes_left: Set[Point], boxes_right: Set[Point],
+                  walls: Set[Point]) -> bool:
+    for non_free in [boxes_left, boxes_right, walls]:
+        for to_add in [to_add_right, to_add_left]:
+            if not to_add.isdisjoint(non_free):
+                return False
+    return True
+
+
 def move_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot: Point, robot_next: Point,
                walls: Set[Point]) -> Tuple[Set[Point], Set[Point], Point]:
     left_old = boxes_left.copy()
@@ -47,13 +56,13 @@ def move_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot:
     boxes_right -= to_remove_right
     while True:
         # we can move
-        if (to_add_left | to_add_right).isdisjoint(walls | boxes_left | boxes_right):
+        if can_move_free(to_add_right, to_add_left, boxes_left, boxes_right, walls):
             boxes_right |= to_add_right
             boxes_left |= to_add_left
             robot = robot_next
             break
         # only boxes, cannot move
-        if not (boxes_left | boxes_right | to_add_right | to_add_left).isdisjoint(walls):
+        if not to_add_left.isdisjoint(walls) or not to_add_right.isdisjoint(walls):
             # revert
             boxes_left = left_old
             boxes_right = right_old
