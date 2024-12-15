@@ -72,11 +72,21 @@ fn print_grid(
 }
 
 fn revert(points: &Boxes, p: Point) -> Boxes {
-    //impl Iterator<Item = Point>
     points
         .iter()
         .map(|x| Point::new(x.x - p.x, x.y - p.y))
         .collect()
+}
+
+fn can_move_free(to_add_right: &Boxes, to_add_left: &Boxes,boxes_left: &Boxes, boxes_right: &Boxes, walls: &Walls) -> bool{
+    for non_free in [boxes_left,boxes_right,walls]{
+        for to_add in [to_add_right,to_add_left]{
+            if !to_add.is_disjoint(non_free){
+                return  false;
+            }
+        }
+    }
+    true
 }
 
 fn move_boxes(
@@ -88,15 +98,10 @@ fn move_boxes(
     walls: &Walls,
 ) -> Point {
     let (mut to_add_left, mut to_add_right) = add_boxes(boxes_left, boxes_right, p, robot_next);
-    boxes_left.retain(|x| !&revert(&to_add_left, p).contains(x));
-    boxes_right.retain(|x| !&revert(&to_add_right, p).contains(x));
-
+    revert(&to_add_left,p).iter().for_each(|value: &Point| {boxes_left.remove(value);});
+    revert(&to_add_right,p).iter().for_each(|value: &Point| {boxes_right.remove(value);});
     loop {
-        let all_adds: HashSet<_> = to_add_left.union(&to_add_right).collect();
-        let all_non_free_space: HashSet<_> = boxes_left.union(boxes_right).cloned().collect();
-        let all_non_free_space: HashSet<_> = all_non_free_space.union(walls).collect();
-
-        if all_adds.is_disjoint(&all_non_free_space) {
+        if can_move_free(&to_add_right, &to_add_left,&boxes_left, boxes_right, &walls) {
             boxes_left.extend(&to_add_left);
             boxes_right.extend(&to_add_right);
             return robot_next;
@@ -114,13 +119,9 @@ fn move_boxes(
                 let (add_l, add_r) = add_boxes(boxes_left, boxes_right, p, *b);
                 to_add_left.extend(&add_l);
                 to_add_right.extend(&add_r);
-                boxes_left.retain(|r| {
-                    !revert(&add_l,p).contains(r)
-                });
-                boxes_right.retain(|r| {
-                    !revert(&add_r,p).contains(r)
-
-                });
+                revert(&add_l,p).iter().for_each(|value: &Point| {boxes_left.remove(value);});
+                revert(&add_r,p).iter().for_each(|value: &Point| {boxes_right.remove(value);});
+                
             }
         }
     }
@@ -213,7 +214,7 @@ fn part_2(walls: &Walls, boxes: &Boxes, robot: Point, directions: &[DirectionStr
     let (mut new_walls_left, new_walls_right) = expand(walls);
     let (new_boxes_left, new_boxes_right) = expand(boxes);
     let new_robot = Point::new(robot.x * 2, robot.y);
-    new_walls_left.extend(new_walls_right.iter());
+    new_walls_left.extend(new_walls_right);
     solve(
         &new_walls_left,
         &new_boxes_left,
