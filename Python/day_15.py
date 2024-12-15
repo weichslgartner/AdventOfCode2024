@@ -58,7 +58,6 @@ def move_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot:
             boxes_left = left_old
             boxes_right = right_old
             break
-        to_add_left_tmp, to_add_right_tmp, to_remove_left_tmp, to_remove_right_tmp = set(), set(), set(), set()
         for s in [to_add_left.copy(), to_add_right.copy()]:
             for b in s:
                 add_l, add_r, rem_l, rem_r = add_boxes(boxes_left, boxes_right, p, Point(b.x, b.y))

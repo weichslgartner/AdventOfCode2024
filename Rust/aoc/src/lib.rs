@@ -128,7 +128,7 @@ pub fn is_in_grid(p: Point, p_max: Point) -> bool {
 ///
 /// ```
 /// use aoc::{Point, get_neighbours_4};
-/// 
+///
 /// let point = Point { x: 1, y: 1 };
 /// let boundary = Point { x: 3, y: 3 };
 /// let neighbors = get_neighbours_4(point, boundary);
@@ -172,7 +172,7 @@ pub fn get_neighbours_4(p: Point, p_max: Point) -> Vec<Point> {
 /// ```
 /// use aoc::extract_all_ints;
 /// use regex::Regex;
-/// 
+///
 /// let input = "The temperatures are -12, -5, and 14 degrees.";
 /// let result = extract_all_ints(input);
 /// assert_eq!(result, vec![-12, -5, 14]);
@@ -180,7 +180,7 @@ pub fn get_neighbours_4(p: Point, p_max: Point) -> Vec<Point> {
 /// let input = "No numbers here!";
 /// let result = extract_all_ints(input);
 /// assert!(result.is_empty());
-/// 
+///
 /// let input = "Mixed 42text and-7numbers33.";
 /// let result = extract_all_ints(input);
 /// assert_eq!(result, vec![42, -7, 33]);
@@ -194,4 +194,33 @@ pub fn extract_all_ints(line: &str) -> Vec<isize> {
     re.find_iter(line)
         .filter_map(|mat| mat.as_str().parse::<isize>().ok())
         .collect()
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum DirectionStr {
+    North,
+    East,
+    South,
+    West,
+}
+
+impl DirectionStr {
+    pub fn from_char(c: char) -> Option<Self> {
+        match c {
+            '^' => Some(DirectionStr::North),
+            '>' => Some(DirectionStr::East),
+            'v' => Some(DirectionStr::South),
+            '<' => Some(DirectionStr::West),
+            _ => None,
+        }
+    }
+
+    pub fn to_point(&self) -> Point {
+        match self {
+            DirectionStr::North => Point::new(0, -1),
+            DirectionStr::East => Point::new(1, 0),
+            DirectionStr::South => Point::new(0, 1),
+            DirectionStr::West => Point::new(-1, 0),
+        }
+    }
 }
