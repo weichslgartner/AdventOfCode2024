@@ -48,6 +48,16 @@ def dir_to_point(direction: Direction) -> Point:
         return Point(0, -1)
 
 
+def dir_str_to_point(direction: DirectionStr) -> Point:
+    if direction == DirectionStr.EAST:
+        return Point(1, 0)
+    if direction == DirectionStr.WEST:
+        return Point(-1, 0)
+    if direction == DirectionStr.SOUTH:
+        return Point(0, 1)
+    if direction == DirectionStr.NORTH:
+        return Point(0, -1)
+
 def point_to_dir(p: Point) -> Direction:
     if p == Point(1, 0):
         return Direction.EAST
