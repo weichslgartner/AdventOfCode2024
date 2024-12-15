@@ -39,7 +39,7 @@ def move(walls: Set[Point], boxes_left: Set[Point], boxes_right: Set[Point], rob
 
 
 def move_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot: Point, robot_next: Point,
-               walls: Set[Point]) ->  Tuple[Set[Point],Set[Point],Point] :
+               walls: Set[Point]) -> Tuple[Set[Point], Set[Point], Point]:
     left_old = boxes_left.copy()
     right_old = boxes_right.copy()
     to_add_left, to_add_right, to_remove_left, to_remove_right = add_boxes(boxes_left, boxes_right, p, robot_next)
@@ -61,19 +61,11 @@ def move_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot:
         to_add_left_tmp, to_add_right_tmp, to_remove_left_tmp, to_remove_right_tmp = set(), set(), set(), set()
         for s in [to_add_left.copy(), to_add_right.copy()]:
             for b in s:
-                to_add_left_new, to_add_right_new, to_remove_left_new, to_remove_right_new = add_boxes(boxes_left,
-                                                                                                       boxes_right,
-                                                                                                       p,
-                                                                                                       Point(b.x,
-                                                                                                             b.y))
-                to_add_left_tmp |= to_add_left_new
-                to_add_right_tmp |= to_add_right_new
-                to_remove_left_tmp |= to_remove_left_new
-                to_remove_right_tmp |= to_remove_right_new
-        to_add_left |= to_add_left_tmp
-        to_add_right |= to_add_right_tmp
-        boxes_left -= to_remove_left_tmp
-        boxes_right -= to_remove_right_tmp
+                add_l, add_r, rem_l, rem_r = add_boxes(boxes_left, boxes_right, p, Point(b.x, b.y))
+                to_add_left |= add_l
+                to_add_right |= add_r
+                boxes_left -= rem_l
+                boxes_right -= rem_r
     return boxes_left, boxes_right, robot
 
 
@@ -85,6 +77,7 @@ def add_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot_n
         to_add_left = {Point(robot_next.x + p.x, robot_next.y + p.y)}
         to_add_right = {Point(robot_next.x + 1 + p.x, robot_next.y + p.y)} if len(boxes_right) > 0 else set()
         return to_add_left, to_add_right, to_remove_left, to_remove_right
+    # only used in part2
     elif robot_next in boxes_right:
         to_remove_right = {robot_next}
         to_remove_left = {Point(x=robot_next.x - 1, y=robot_next.y)}
