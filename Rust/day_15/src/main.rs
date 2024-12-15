@@ -43,6 +43,7 @@ fn parse_input(input_str: &str) -> (Walls, Boxes, Point, Vec<DirectionStr>) {
     (walls, boxes, robot.expect("Robot not found"), directions)
 }
 
+#[allow(unused)]
 fn print_grid(
     boxes_left: &Boxes,
     boxes_right: &Boxes,
