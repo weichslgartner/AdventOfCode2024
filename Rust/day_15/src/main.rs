@@ -43,6 +43,41 @@ fn parse_input(input_str: &str) -> (Walls, Boxes, Point, Vec<DirectionStr>) {
     (walls, boxes, robot.expect("Robot not found"), directions)
 }
 
+fn print_grid(
+    boxes_left: &Boxes,
+    boxes_right: &Boxes,
+    robot: Point,
+    walls: &Walls,
+    dir: DirectionStr,
+) {
+    println!("{:?}", dir);
+    for y in 0..=7 {
+        for x in 0..=15 {
+            let p = Point::new(x, y);
+            if boxes_left.contains(&p) {
+                print!("[");
+            } else if boxes_right.contains(&p) {
+                print!("]");
+            } else if walls.contains(&p) {
+                print!("#");
+            } else if p == robot {
+                print!("@");
+            } else {
+                print!(".");
+            }
+        }
+        println!();
+    }
+}
+
+fn revert(points: &Boxes, p: Point) -> Boxes {
+    //impl Iterator<Item = Point>
+    points
+        .iter()
+        .map(|x| Point::new(x.x - p.x, x.y - p.y))
+        .collect()
+}
+
 fn move_boxes(
     boxes_left: &mut Boxes,
     boxes_right: &mut Boxes,
@@ -51,22 +86,15 @@ fn move_boxes(
     robot_next: Point,
     walls: &Walls,
 ) -> Point {
-    let left_old = boxes_left.clone();
-    let right_old = boxes_right.clone();
-    let (mut to_add_left, mut to_add_right, to_remove_left, to_remove_right) =
-        add_boxes(boxes_left, boxes_right, p, robot_next);
-    boxes_left.retain(|x| !&to_remove_left.contains(x));
-    boxes_right.retain(|x| !&to_remove_right.contains(x));
-    let mut to_remove_left: Boxes = HashSet::new();
-    let mut to_remove_right: Boxes = HashSet::new();
-    to_remove_left.extend(to_remove_left.clone());
-    to_remove_right.extend(to_remove_right.clone());
+    let (mut to_add_left, mut to_add_right) = add_boxes(boxes_left, boxes_right, p, robot_next);
+    boxes_left.retain(|x| !&revert(&to_add_left, p).contains(x));
+    boxes_right.retain(|x| !&revert(&to_add_right, p).contains(x));
+
     loop {
         let all_adds: HashSet<_> = to_add_left.union(&to_add_right).collect();
         let all_non_free_space: HashSet<_> = boxes_left.union(boxes_right).cloned().collect();
         let all_non_free_space: HashSet<_> = all_non_free_space.union(walls).collect();
 
-        
         if all_adds.is_disjoint(&all_non_free_space) {
             boxes_left.extend(&to_add_left);
             boxes_right.extend(&to_add_right);
@@ -74,23 +102,24 @@ fn move_boxes(
         }
 
         if !to_add_left.is_disjoint(walls) || !to_add_right.is_disjoint(walls) {
-            *boxes_left = left_old;
-            *boxes_right = right_old;
-           // boxes_left.extend(to_remove_left);
-           // boxes_right.extend(to_add_right);
+            // revert changes
+            boxes_left.extend(revert(&to_add_left, p));
+            boxes_right.extend(revert(&to_add_right, p));
             return robot;
         }
 
         for s in [to_add_left.clone(), to_add_right.clone()].iter() {
             for b in s {
-                let (add_l, add_r, rem_l, rem_r) = add_boxes(boxes_left, boxes_right, p, *b);
-                to_add_left.extend(add_l);
-                to_add_right.extend(add_r);
-                boxes_left.retain(|x| !rem_l.contains(x));
-                boxes_right.retain(|x| !rem_r.contains(x));
-                to_remove_left.extend(rem_l);
-                to_remove_right.extend(rem_r);
+                let (add_l, add_r) = add_boxes(boxes_left, boxes_right, p, *b);
+                to_add_left.extend(&add_l);
+                to_add_right.extend(&add_r);
+                boxes_left.retain(|r| {
+                    !revert(&add_l,p).contains(r)
+                });
+                boxes_right.retain(|r| {
+                    !revert(&add_r,p).contains(r)
 
+                });
             }
         }
     }
@@ -101,43 +130,26 @@ fn add_boxes(
     boxes_right: &Boxes,
     p: Point,
     robot_next: Point,
-) -> (Boxes, Boxes, Boxes, Boxes) {
+) -> (Boxes, Boxes) {
     if boxes_left.contains(&robot_next) {
         let mut to_add_left = HashSet::new();
         let mut to_add_right = HashSet::new();
-        let mut to_remove_left = HashSet::new();
-        let mut to_remove_right = HashSet::new();
-        to_remove_left.insert(robot_next);
         to_add_left.insert(Point::new(robot_next.x + p.x, robot_next.y + p.y));
         if !boxes_right.is_empty() {
-            to_remove_right.insert(Point::new(robot_next.x + 1, robot_next.y));
             to_add_right.insert(Point::new(robot_next.x + 1 + p.x, robot_next.y + p.y));
         }
-
-        return (to_add_left, to_add_right, to_remove_left, to_remove_right);
+        return (to_add_left, to_add_right);
     }
 
     if boxes_right.contains(&robot_next) {
         let mut to_add_left = HashSet::new();
         let mut to_add_right = HashSet::new();
-        let mut to_remove_left = HashSet::new();
-        let mut to_remove_right = HashSet::new();
-
-        to_remove_right.insert(robot_next);
-        to_remove_left.insert(Point::new(robot_next.x - 1, robot_next.y));
-
         to_add_left.insert(Point::new(robot_next.x - 1 + p.x, robot_next.y + p.y));
         to_add_right.insert(Point::new(robot_next.x + p.x, robot_next.y + p.y));
-
-        return (to_add_left, to_add_right, to_remove_left, to_remove_right);
+        return (to_add_left, to_add_right);
     }
 
-    (
-        HashSet::new(),
-        HashSet::new(),
-        HashSet::new(),
-        HashSet::new(),
-    )
+    (HashSet::new(), HashSet::new())
 }
 
 fn solve(
@@ -149,11 +161,12 @@ fn solve(
 ) -> isize {
     let mut boxes_left = boxes_left.clone();
     let mut boxes_right = boxes_right.clone();
+    //print_grid(&boxes_left, &boxes_right, robot, walls, DirectionStr::North);
     for &direct in directions {
         let p = direct.to_point();
         let robot_next = Point::new(robot.x + p.x, robot.y + p.y);
-
         if walls.contains(&robot_next) {
+            //print_grid(&boxes_left, &boxes_right, robot, walls, direct);
             continue;
         }
 
@@ -161,6 +174,7 @@ fn solve(
             && (boxes_right.is_empty() || !boxes_right.contains(&robot_next))
         {
             robot = robot_next;
+            //print_grid(&boxes_left, &boxes_right, robot, walls, direct);
             continue;
         }
 
@@ -172,6 +186,7 @@ fn solve(
             robot_next,
             walls,
         );
+        //print_grid(&boxes_left, &boxes_right, robot, walls, direct);
     }
     boxes_left.iter().map(|p| 100 * p.y + p.x).sum()
 }
