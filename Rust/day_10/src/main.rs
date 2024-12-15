@@ -58,7 +58,7 @@ fn get_n_trailheads(p: Point, p_max: Point, points: &HashMap<Point, i32>) -> (us
     (heads.len(), score)
 }
 
-fn solve(points: &HashMap<Point, i32>, starts: &Vec<Point>, p_max: Point) -> (usize, i32) {
+fn solve(points: &HashMap<Point, i32>, starts: &[Point], p_max: Point) -> (usize, i32) {
     starts
         .iter()
         .map(|&p| get_n_trailheads(p, p_max, points))

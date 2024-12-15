@@ -101,7 +101,7 @@ fn move_boxes(
     revert(&to_add_left,p).iter().for_each(|value: &Point| {boxes_left.remove(value);});
     revert(&to_add_right,p).iter().for_each(|value: &Point| {boxes_right.remove(value);});
     loop {
-        if can_move_free(&to_add_right, &to_add_left,&boxes_left, boxes_right, &walls) {
+        if can_move_free(&to_add_right, &to_add_left,boxes_left, boxes_right, walls) {
             boxes_left.extend(&to_add_left);
             boxes_right.extend(&to_add_right);
             return robot_next;
@@ -202,7 +202,6 @@ fn expand(points: &HashSet<Point>) -> (HashSet<Point>, HashSet<Point>) {
         left.insert(b_new);
         right.insert(Point::new(b_new.x + 1, p.y));
     }
-
     (left, right)
 }
 
