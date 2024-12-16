@@ -1,12 +1,12 @@
 use std::collections::HashSet;
 
-use aoc::DirectionStr;
+use aoc::Direction;
 use aoc::Point;
 
 type Walls = HashSet<Point>;
 type Boxes = HashSet<Point>;
 
-fn parse_input(input_str: &str) -> (Walls, Boxes, Point, Vec<DirectionStr>) {
+fn parse_input(input_str: &str) -> (Walls, Boxes, Point, Vec<Direction>) {
     let mut robot = None;
     let mut walls = HashSet::new();
     let mut boxes = HashSet::new();
@@ -36,7 +36,7 @@ fn parse_input(input_str: &str) -> (Walls, Boxes, Point, Vec<DirectionStr>) {
 
     for line in directions_str.lines() {
         for c in line.chars() {
-            directions.push(DirectionStr::from_char(c).expect("cannot parse direction"));
+            directions.push(Direction::from_char(c).expect("cannot parse direction"));
         }
     }
 
@@ -49,7 +49,7 @@ fn print_grid(
     boxes_right: &Boxes,
     robot: Point,
     walls: &Walls,
-    dir: DirectionStr,
+    dir: Direction,
 ) {
     println!("{:?}", dir);
     for y in 0..=7 {
@@ -159,7 +159,7 @@ fn solve(
     boxes_left: &Boxes,
     boxes_right: &Boxes,
     mut robot: Point,
-    directions: &[DirectionStr],
+    directions: &[Direction],
 ) -> isize {
     let mut boxes_left = boxes_left.clone();
     let mut boxes_right = boxes_right.clone();
@@ -205,11 +205,11 @@ fn expand(points: &HashSet<Point>) -> (HashSet<Point>, HashSet<Point>) {
     (left, right)
 }
 
-fn part_1(walls: &Walls, boxes: &Boxes, robot: Point, directions: &[DirectionStr]) -> isize {
+fn part_1(walls: &Walls, boxes: &Boxes, robot: Point, directions: &[Direction]) -> isize {
     solve(walls, boxes, &HashSet::new(), robot, directions)
 }
 
-fn part_2(walls: &Walls, boxes: &Boxes, robot: Point, directions: &[DirectionStr]) -> isize {
+fn part_2(walls: &Walls, boxes: &Boxes, robot: Point, directions: &[Direction]) -> isize {
     let (mut new_walls_left, new_walls_right) = expand(walls);
     let (new_boxes_left, new_boxes_right) = expand(boxes);
     let new_robot = Point::new(robot.x * 2, robot.y);

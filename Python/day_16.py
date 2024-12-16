@@ -1,18 +1,12 @@
 import collections
-from dataclasses import dataclass
-import sys
 import heapq
-from itertools import count
+import sys
+from typing import Set, List
 
-from aoc import *
-
-
-class Element(namedtuple('Element', 'cost, direc, point')):
-    def __repr__(self):
-        return f'Point({self.point}): {self.direc} {self.cost}'
+from aoc import Point, Direction, dir_to_point
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> (Set[Point], Point, Point):
     walls = set()
     start, end = None, None
     for y, line in enumerate(lines):
@@ -27,17 +21,20 @@ def parse_input(lines):
     return walls, start, end
 
 
-def solve(walls, start, end):
+def solve(walls: Set[Point], start: Point, end: Point) -> (int, int):
     queue = []
-    heapq.heappush(queue, (0,Direction.EAST.value, (start, Direction.EAST, [start])))
+    heapq.heappush(queue, (0, Direction.EAST.value, [start]))
     tiles_best_paths = set()
     costs_dict = collections.defaultdict(lambda: sys.maxsize)
     while len(queue) > 0:
-        cost,_, (point, direc, path) = heapq.heappop(queue)
-        #print(cost, (point, direc) )
-        if cost > costs_dict[(point,direc)]:
+        cost, dir_val, path = heapq.heappop(queue)
+        point = path[-1]
+        direc = Direction(dir_val)
+        if cost > costs_dict[(point, direc)]:
             continue
-        costs_dict[point,direc] = cost
+        if cost > min(costs_dict[(end, d)] for d in Direction):
+            continue
+        costs_dict[point, direc] = cost
         if point == end:
             if cost < min(costs_dict[(end, d)] for d in Direction):
                 tiles_best_paths = set(path)
@@ -49,9 +46,7 @@ def solve(walls, start, end):
         if next_p not in walls:
             path_tmp = path.copy()
             path_tmp.append(next_p)
-            heapq.heappush(queue, (cost + 1,direc.value, (next_p, direc, path_tmp)))
-        # Direction()
-
+            heapq.heappush(queue, (cost + 1, direc.value, path_tmp))
         for d in [Direction((direc.value + 1) % (len(Direction))),
                   Direction((direc.value - 1) % (len(Direction)))]:
             p_delta = dir_to_point(d)
@@ -59,9 +54,9 @@ def solve(walls, start, end):
             if next_p not in walls:
                 path_tmp = path.copy()
                 path_tmp.append(next_p)
-                heapq.heappush(queue, (cost +1000 + 1, d.value, (next_p, d, path_tmp)))
-    #print_grid(tiles_best_paths, walls)
-    return min(costs_dict[(end,d)] for d in Direction), len(tiles_best_paths)
+                heapq.heappush(queue, (cost + 1000 + 1, d.value, path_tmp))
+    # print_grid(tiles_best_paths, walls)
+    return min(costs_dict[(end, d)] for d in Direction), len(tiles_best_paths)
 
 
 def print_grid(tiles_best_paths, walls):
@@ -75,10 +70,6 @@ def print_grid(tiles_best_paths, walls):
             else:
                 print(".", end="")
         print()
-
-
-def part_2(walls, start, end):
-    pass
 
 
 def main():

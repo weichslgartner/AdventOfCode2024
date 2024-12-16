@@ -1,6 +1,6 @@
 use anyhow::Result;
 use regex::Regex;
-use std::str::FromStr;
+use std::{collections::HashSet, str::FromStr};
 
 /// Parses a line of text into a vector of values of type `T`, splitting by `SPLIT_CHAR`.
 ///
@@ -68,7 +68,7 @@ pub fn parse_ints<T: FromStr, const SPLIT_CHAR: char>(input: &str) -> Result<Vec
 /// # Fields
 /// - `x`: The x-coordinate of the point.
 /// - `y`: The y-coordinate of the point.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Ord,PartialOrd, Clone, Copy, Hash)]
 pub struct Point {
     pub x: isize,
     pub y: isize,
@@ -196,31 +196,72 @@ pub fn extract_all_ints(line: &str) -> Vec<isize> {
         .collect()
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub enum DirectionStr {
+#[derive(Debug, PartialEq, Eq, Ord,PartialOrd, Clone, Copy, Hash)]
+pub enum Direction {
     North,
     East,
     South,
     West,
 }
 
-impl DirectionStr {
+impl Direction {
     pub fn from_char(c: char) -> Option<Self> {
         match c {
-            '^' => Some(DirectionStr::North),
-            '>' => Some(DirectionStr::East),
-            'v' => Some(DirectionStr::South),
-            '<' => Some(DirectionStr::West),
+            '^' => Some(Direction::North),
+            '>' => Some(Direction::East),
+            'v' => Some(Direction::South),
+            '<' => Some(Direction::West),
             _ => None,
         }
     }
 
     pub fn to_point(&self) -> Point {
         match self {
-            DirectionStr::North => Point::new(0, -1),
-            DirectionStr::East => Point::new(1, 0),
-            DirectionStr::South => Point::new(0, 1),
-            DirectionStr::West => Point::new(-1, 0),
+            Direction::North => Point::new(0, -1),
+            Direction::East => Point::new(1, 0),
+            Direction::South => Point::new(0, 1),
+            Direction::West => Point::new(-1, 0),
         }
+    }
+    pub fn rotate(self, clockwise: bool) -> Self {
+        match (self, clockwise) {
+            (Direction::North, true) => Direction::East,
+            (Direction::East, true) => Direction::South,
+            (Direction::South, true) => Direction::West,
+            (Direction::West, true) => Direction::North,
+            (Direction::North, false) => Direction::West,
+            (Direction::West, false) => Direction::South,
+            (Direction::South, false) => Direction::East,
+            (Direction::East, false) => Direction::North,
+        }
+    }
+
+    pub fn all() -> Vec<Self> {
+        vec![
+            Direction::North,
+            Direction::East,
+            Direction::South,
+            Direction::West,
+        ]
+    }
+}
+
+
+pub fn print_grid(tiles_best_paths: &HashSet<Point>, walls: &HashSet<Point>) {
+    let max_x = walls.iter().map(|p| p.x).max().unwrap();
+    let max_y = walls.iter().map(|p| p.y).max().unwrap();
+
+    for y in 0..=max_y {
+        for x in 0..=max_x {
+            let p = Point { x, y };
+            if walls.contains(&p) {
+                print!("#");
+            } else if tiles_best_paths.contains(&p) {
+                print!("O");
+            } else {
+                print!(".");
+            }
+        }
+        println!();
     }
 }
