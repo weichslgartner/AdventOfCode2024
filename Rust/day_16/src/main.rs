@@ -1,8 +1,7 @@
-use std::collections::{BinaryHeap, HashSet, HashMap};
 use std::cmp::Reverse;
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
 use aoc::{Direction, Point};
-
 
 fn parse_input(input: &str) -> (HashSet<Point>, Point, Point) {
     let mut walls = HashSet::new();
@@ -33,17 +32,11 @@ fn parse_input(input: &str) -> (HashSet<Point>, Point, Point) {
     )
 }
 
-fn solve(
-    walls: &HashSet<Point>,
-    start: Point,
-    end: Point,
-) -> (isize, usize) {
+fn solve(walls: &HashSet<Point>, start: Point, end: Point) -> (isize, usize) {
     let mut queue = BinaryHeap::new();
     let mut costs: HashMap<(Point, Direction), isize> = HashMap::new();
     let mut tiles_best_paths = HashSet::new();
-
     queue.push(Reverse((0, Direction::East, vec![start])));
-
     for d in Direction::all() {
         costs.insert((end, d), isize::MAX);
     }
@@ -57,11 +50,12 @@ fn solve(
             }
         }
 
-        if cost > Direction::all()
-            .iter()
-            .map(|&d| *costs.get(&(end, d)).unwrap_or(&isize::MAX))
-            .min()
-            .unwrap()
+        if cost
+            > Direction::all()
+                .iter()
+                .map(|&d| *costs.get(&(end, d)).unwrap_or(&isize::MAX))
+                .min()
+                .unwrap()
         {
             continue;
         }
@@ -75,10 +69,14 @@ fn solve(
                 .min()
                 .unwrap();
 
-            if cost < min_cost {
-                tiles_best_paths = path.iter().cloned().collect();
-            } else if cost == min_cost {
-                tiles_best_paths.extend(path.iter().cloned());
+            match cost.cmp(&min_cost) {
+                std::cmp::Ordering::Less => {
+                    tiles_best_paths = path.iter().cloned().collect();
+                }
+                std::cmp::Ordering::Equal => {
+                    tiles_best_paths.extend(path.iter().cloned());
+                }
+                _ => {}
             }
 
             continue;
@@ -120,11 +118,8 @@ fn solve(
     (min_path, tiles_best_paths.len())
 }
 
-
-
 fn main() {
     let input = include_str!("../../../inputs/input_16.txt");
-
 
     let (walls, start, end) = parse_input(input);
     let (part1, part2) = solve(&walls, start, end);
@@ -132,6 +127,3 @@ fn main() {
     println!("Part 1: {}", part1);
     println!("Part 2: {}", part2);
 }
-
-
-
