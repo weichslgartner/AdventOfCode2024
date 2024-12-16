@@ -61,7 +61,7 @@ def move_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot:
             boxes_left |= to_add_left
             robot = robot_next
             break
-        # only boxes, cannot move
+        # only boxes or walls, cannot move
         if not to_add_left.isdisjoint(walls) or not to_add_right.isdisjoint(walls):
             # revert
             boxes_left = left_old
@@ -98,9 +98,9 @@ def add_boxes(boxes_left: Set[Point], boxes_right: Set[Point], p: Point, robot_n
 def expand(points: Set[Point]) -> Tuple[Set[Point], Set[Point]]:
     left, right = set(), set()
     for p in points:
-        b_new = Point(x=p.x * 2, y=p.y)
-        left.add(b_new)
-        right.add(Point(b_new.x + 1, p.y))
+        p_new = Point(x=p.x * 2, y=p.y)
+        left.add(p_new)
+        right.add(Point(p_new.x + 1, p.y))
     return left, right
 
 

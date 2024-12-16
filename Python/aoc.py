@@ -58,6 +58,7 @@ def dir_str_to_point(direction: DirectionStr) -> Point:
     if direction == DirectionStr.NORTH:
         return Point(0, -1)
 
+
 def point_to_dir(p: Point) -> Direction:
     if p == Point(1, 0):
         return Direction.EAST
