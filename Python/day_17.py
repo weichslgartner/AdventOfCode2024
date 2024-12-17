@@ -1,9 +1,9 @@
-from typing import Dict
+from typing import Dict, List, Optional
 
-from aoc import *
+from aoc import input_as_str, extract_all_ints
 
 
-def parse_input(input_str):
+def parse_input(input_str: str) -> (Dict[str, int], List[int]):
     regs = {}
     registers, program = input_str.split("\n\n")
     for line in registers.splitlines():
@@ -12,7 +12,7 @@ def parse_input(input_str):
     return regs, extract_all_ints(program)
 
 
-def get_combo(operand: int, regs) -> int:
+def get_combo(operand: int, regs: Dict[str, int]) -> int:
     if operand <= 3:
         return operand
     if operand == 4:
@@ -23,14 +23,17 @@ def get_combo(operand: int, regs) -> int:
         return regs["C"]
 
 
-def part_1(regs: Dict[str, int], program: List[int]):
-    print(regs, program)
+def part_1(regs: Dict[str, int], program: List[int]) -> str:
+    out = run_program(program, regs)
+    return ','.join(map(str, out))
+
+
+def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
     inst_ptr = 0
     out = []
-
     while inst_ptr < len(program):
         opcode, operand = program[inst_ptr:inst_ptr + 2]
-        print(opcode, operand)
+        # print(opcode, operand)
         jumps = False
         match opcode:
             case 0:
@@ -51,20 +54,34 @@ def part_1(regs: Dict[str, int], program: List[int]):
                 regs['B'] = int(regs['A'] / (2 ** get_combo(operand, regs)))
             case 7:
                 regs['C'] = int(regs['A'] / (2 ** get_combo(operand, regs)))
-        print(regs)
+        # print(regs)
         inst_ptr = inst_ptr + 2 if not jumps else inst_ptr
-    print(regs)
-    return ','.join(map(str,out))
+    return out
 
 
-def part_2(regs: Dict[str, int], program: List[int]):
-    pass
+def dfs(reg_a: int, regs: Dict[str, int], program: List[int]) -> Optional[int]:
+    regs_before = regs.copy()
+    for i in range(8):
+        a = reg_a + i
+        regs = {'A': a, 'B': regs_before['B'], 'C': regs_before['C']}
+        out = run_program(program, regs)
+        if out == program:
+            return a
+        if out == program[-len(out):]:
+            res = dfs(8 * a, regs_before, program)
+            if res is not None:
+                return res
+    return None
+
+
+def part_2(regs: Dict[str, int], program: List[int]) -> int:
+    return dfs(0, regs, program)
 
 
 def main():
     input_str = input_as_str("input_17.txt")
     regs, program = parse_input(input_str)
-    print("Part 1:", part_1(regs, program)) # 3,1,5,1,2,2,6,3,3 incorrect
+    print("Part 1:", part_1(regs, program))
     print("Part 2:", part_2(regs, program))
 
 
