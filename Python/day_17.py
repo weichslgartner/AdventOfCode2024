@@ -23,9 +23,8 @@ def get_combo(operand: int, regs: Dict[str, int]) -> int:
         return regs["C"]
 
 
-def part_1(regs: Dict[str, int], program: List[int]) -> str:
-    out = run_program(program, regs)
-    return ','.join(map(str, out))
+def div(operand: int, regs: Dict[str, int]) -> int:
+    return regs['A'] / (2 ** get_combo(operand, regs))
 
 
 def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
@@ -33,11 +32,10 @@ def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
     out = []
     while inst_ptr < len(program):
         opcode, operand = program[inst_ptr:inst_ptr + 2]
-        # print(opcode, operand)
         jumps = False
         match opcode:
             case 0:
-                regs['A'] = int(regs['A'] / (2 ** get_combo(operand, regs)))
+                regs['A'] = int(div(operand, regs))
             case 1:
                 regs['B'] ^= operand
             case 2:
@@ -51,10 +49,9 @@ def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
             case 5:
                 out.append(get_combo(operand, regs) % 8)
             case 6:
-                regs['B'] = int(regs['A'] / (2 ** get_combo(operand, regs)))
+                regs['B'] = int(div(operand, regs))
             case 7:
-                regs['C'] = int(regs['A'] / (2 ** get_combo(operand, regs)))
-        # print(regs)
+                regs['C'] = int(div(operand, regs))
         inst_ptr = inst_ptr + 2 if not jumps else inst_ptr
     return out
 
@@ -70,6 +67,11 @@ def dfs(reg_a: int, regs: Dict[str, int], program: List[int]) -> Optional[int]:
         if out[0] == program[-len(out)] and (res := dfs(8 * a, regs_before, program)) is not None:
             return res
     return None
+
+
+def part_1(regs: Dict[str, int], program: List[int]) -> str:
+    out = run_program(program, regs)
+    return ','.join(map(str, out))
 
 
 def part_2(regs: Dict[str, int], program: List[int]) -> int:
