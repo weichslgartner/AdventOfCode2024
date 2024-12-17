@@ -67,7 +67,7 @@ def dfs(reg_a: int, regs: Dict[str, int], program: List[int]) -> Optional[int]:
         out = run_program(program, regs)
         if out == program:
             return a
-        if out == program[-len(out):] and (res := dfs(8 * a, regs_before, program)) is not None:
+        if out[0] == program[-len(out)] and (res := dfs(8 * a, regs_before, program)) is not None:
             return res
     return None
 
