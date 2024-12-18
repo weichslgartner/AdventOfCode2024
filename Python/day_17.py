@@ -24,7 +24,7 @@ def get_combo(operand: int, regs: Dict[str, int]) -> int:
 
 
 def div(operand: int, regs: Dict[str, int]) -> int:
-    return regs['A'] / (2 ** get_combo(operand, regs))
+    return int(regs['A'] / (2 ** get_combo(operand, regs)))
 
 
 def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
@@ -35,7 +35,7 @@ def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
         jumps = False
         match opcode:
             case 0:
-                regs['A'] = int(div(operand, regs))
+                regs['A'] = div(operand, regs)
             case 1:
                 regs['B'] ^= operand
             case 2:
@@ -49,9 +49,9 @@ def run_program(program: List[int], regs: Dict[str, int]) -> List[int]:
             case 5:
                 out.append(get_combo(operand, regs) % 8)
             case 6:
-                regs['B'] = int(div(operand, regs))
+                regs['B'] = div(operand, regs)
             case 7:
-                regs['C'] = int(div(operand, regs))
+                regs['C'] = div(operand, regs)
         inst_ptr = inst_ptr + 2 if not jumps else inst_ptr
     return out
 
@@ -64,14 +64,13 @@ def dfs(reg_a: int, regs: Dict[str, int], program: List[int]) -> Optional[int]:
         out = run_program(program, regs)
         if out == program:
             return a
-        if out[0] == program[-len(out)] and (res := dfs(8 * a, regs_before, program)) is not None:
+        if out == program[-len(out):] and (res := dfs(8 * a, regs_before, program)) is not None:
             return res
     return None
 
 
 def part_1(regs: Dict[str, int], program: List[int]) -> str:
-    out = run_program(program, regs)
-    return ','.join(map(str, out))
+    return ','.join(map(str, run_program(program, regs)))
 
 
 def part_2(regs: Dict[str, int], program: List[int]) -> int:
