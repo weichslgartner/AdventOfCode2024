@@ -1,55 +1,58 @@
 use cached::proc_macro::cached;
+use lazy_static::lazy_static;
+use std::sync::RwLock;
 
-fn parse_input(input: &str) -> (Vec<String>, Vec<String>) {
+lazy_static! {
+    static ref TOWELS: RwLock<Vec<&'static str>> = RwLock::new(Vec::new());
+}
+
+fn parse_input(input: &str) -> Vec<String> {
     let parts: Vec<&str> = input.split("\n\n").collect();
-    let towels = parts[0]
+    let patterns = parts[1].lines().map(|p| p.to_string()).collect();
+    let towels: Vec<&'static str> = parts[0]
         .split(',')
-        .map(|t| t.trim().to_string())
+        .map(|t| Box::leak(t.trim().to_string().into_boxed_str()) as &'static str) // Cast to immutable reference
         .collect();
-    let patterns = parts[1]
-        .lines()
-        .map(|p| p.to_string())
-        .collect();
-    (towels, patterns)
+
+    {
+        let mut towels_global = TOWELS.write().unwrap();
+        *towels_global = towels;
+    }
+    patterns
 }
 
 #[cached]
-fn cnt_valid_designs(towels: Vec<String>, pattern: String) -> usize {
+fn cnt_valid_designs(pattern: String) -> usize {
     if pattern.is_empty() {
         return 1;
     }
-
-    towels
+    TOWELS.read().unwrap()
         .iter()
-        .filter(|t| pattern.starts_with(t.as_str()))
+        .filter(|t| pattern.starts_with(*t))
         .map(|t| {
-            let remaining_pattern = pattern[t.len()..].to_string();
-            cnt_valid_designs(towels.clone(), remaining_pattern)
+            cnt_valid_designs(pattern[t.len()..].to_string())
         })
         .sum()
 }
 
-fn part_1(towels: Vec<String>, patterns: Vec<String>) -> usize {
+fn part_1(patterns: &[String]) -> usize {
     patterns
         .iter()
-        .map(|p| cnt_valid_designs(towels.clone(), p.clone()) > 0)
+        .map(|p| cnt_valid_designs( p.clone()) > 0)
         .filter(|&valid| valid)
-        .count() 
+        .count()
 }
 
-fn part_2(towels: Vec<String>, patterns: Vec<String>) -> usize {
+fn part_2(patterns: &[String]) -> usize {
     patterns
         .iter()
-        .map(|p| cnt_valid_designs(towels.clone(), p.clone()))
+        .map(|p| cnt_valid_designs(p.clone()))
         .sum()
 }
 
 fn main() {
     let input = include_str!("../../../inputs/input_19.txt");
-    let (towels, patterns) = parse_input(input);
-    println!("Part 1: {}", part_1(towels.clone(), patterns.clone()));
-    println!("Part 2: {}", part_2(towels, patterns));
+    let patterns = parse_input(input);
+    println!("Part 1: {}", part_1(&patterns));
+    println!("Part 2: {}", part_2(&patterns));
 }
-
-
-
