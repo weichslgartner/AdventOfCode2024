@@ -1,4 +1,3 @@
-import collections
 from typing import List, Set, Dict
 
 from aoc import get_lines, Point, get_neighbours_4, is_in_grid, manhattan_distance
@@ -39,8 +38,10 @@ def get_cheat_destinations(p: Point, p_max: Point, walls, costs_dict, save_at_le
     for y in range(-max_dist, max_dist + 1):
         for x in range(-max_dist, max_dist + 1):
             n = Point(p.x + x, p.y + y)
-            if (n not in walls and manhattan_distance(p, n) <= max_dist and is_in_grid(n, p_max) and
-                    costs_dict[n] >= costs_dict[p] + manhattan_distance(p, n) + save_at_least):
+            if (n not in walls
+                    and manhattan_distance(p, n) <= max_dist
+                    and is_in_grid(n, p_max)
+                    and costs_dict[n] >= costs_dict[p] + manhattan_distance(p, n) + save_at_least):
                 point_set.add(n)
     return point_set
 
