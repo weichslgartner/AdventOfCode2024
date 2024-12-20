@@ -51,8 +51,8 @@ def solve(start: Point, end: Point, walls: Set[Point], max_dist: int, save_at_le
     costs_dict, path = calc_costs(end, start, walls, p_max)
     savings = 0
     for p in path[:-save_at_least]:
-        for _ in get_cheat_destinations(p, p_max, walls, costs_dict, save_at_least=save_at_least, max_dist=max_dist):
-            savings += 1
+        n_cheats = get_cheat_destinations(p, p_max, walls, costs_dict, save_at_least=save_at_least, max_dist=max_dist)
+        savings += len(n_cheats)
     return savings
 
 

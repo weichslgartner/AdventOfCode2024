@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use aoc::{get_neighbours_4, Point};
+use aoc::{get_neighbours_4, is_in_grid, Point};
 use rayon::iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 type Walls = HashSet<Point>;
@@ -77,12 +77,7 @@ fn get_cheat_destinations(
                 x: p.x + x,
                 y: p.y + y,
             };
-            if n.x >= 0
-                && n.y >= 0
-                && n.x <= p_max.x
-                && n.y <= p_max.y
-                && !walls.contains(&n)
-                && p.manhattan_distance(&n) <= max_dist
+            if is_in_grid(n, *p_max) && !walls.contains(&n) && p.manhattan_distance(&n) <= max_dist
             {
                 if let Some(&n_cost) = costs_dict.get(&n) {
                     if n_cost >= costs_dict[p] + p.manhattan_distance(&n) + save_at_least {
