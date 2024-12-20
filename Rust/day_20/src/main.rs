@@ -56,10 +56,6 @@ fn calc_costs(end: &Point, start: &Point, walls: &Walls, p_max: &Point) -> (Cost
     let mut path = vec![*start];
 
     while let Some((cost, point)) = stack.pop() {
-        if costs_dict.contains_key(&point) {
-            continue;
-        }
-
         costs_dict.insert(point, cost);
         if point == *end {
             return (costs_dict, path);
@@ -112,10 +108,6 @@ fn get_cheat_destinations(
     point_set
 }
 
-fn calc_savings(costs_dict: &Costs, n: &Point, normal_cost: isize, p: &Point) -> isize {
-    let new_cost = costs_dict[p] + p.manhattan_distance(n) + (normal_cost - costs_dict[n]);
-    normal_cost - new_cost
-}
 
 fn solve(start: Point, end: Point, walls: Walls, max_dist: isize, save_at_least: isize) -> usize {
     let p_max = Point {
