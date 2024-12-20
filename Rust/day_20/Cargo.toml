@@ -8,4 +8,5 @@ authors = ["weichslgartner <weichslgartner@gmail.com>"]
 
 [dependencies]
 aoc = { version = "0.1.0", path = "../aoc" }
+rayon = "1.10.0"
 

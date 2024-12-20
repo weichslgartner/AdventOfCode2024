@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use aoc::Point;
+use rayon::iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 type Walls = HashSet<Point>;
 
@@ -116,37 +117,30 @@ fn calc_savings(costs_dict: &Costs, n: &Point, normal_cost: isize, p: &Point) ->
     normal_cost - new_cost
 }
 
-fn solve(start: Point, end: Point, walls: Walls, max_dist: isize, save_at_least: isize) -> isize {
+fn solve(start: Point, end: Point, walls: Walls, max_dist: isize, save_at_least: isize) -> usize {
     let p_max = Point {
         x: walls.iter().map(|w| w.x).max().unwrap_or(0),
         y: walls.iter().map(|w| w.y).max().unwrap_or(0),
     };
 
     let (costs_dict, path) = calc_costs(&end, &start, &walls, &p_max);
-    let normal_cost = *costs_dict.get(&end).unwrap();
-    let mut savings = HashMap::new();
-
-    for p in path.iter().take(path.len() - save_at_least as usize) {
-        for n in get_cheat_destinations(p, &p_max, &walls, &costs_dict, save_at_least, max_dist) {
-            let saving = calc_savings(&costs_dict, &n, normal_cost, p);
-            *savings.entry(saving).or_insert(0) += 1;
+    path.par_iter().take(path.len() - save_at_least as usize).map(
+        |p|{
+            get_cheat_destinations(p, &p_max, &walls, &costs_dict, save_at_least, max_dist).len()
         }
-    }
-
-    savings.values().sum()
+    ).sum()
 }
 
-fn part_1(walls: Walls, start: Point, end: Point) -> isize {
+fn part_1(walls: Walls, start: Point, end: Point) -> usize {
     solve(start, end, walls, 2, 100)
 }
 
-fn part_2(walls: Walls, start: Point, end: Point) -> isize {
+fn part_2(walls: Walls, start: Point, end: Point) -> usize {
     solve(start, end, walls, 20, 100)
 }
 
 fn main() {
     let input = include_str!("../../../inputs/input_20.txt");
-
     let (walls, start, end) = parse_input(input);
     println!("Part 1: {}", part_1(walls.clone(), start, end));
     println!("Part 2: {}", part_2(walls, start, end));
