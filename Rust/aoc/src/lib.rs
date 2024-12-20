@@ -92,6 +92,10 @@ impl Point {
     pub fn new(x: isize, y: isize) -> Self {
         Self { x, y }
     }
+
+    pub fn manhattan_distance(&self, other: &Point) -> isize {
+        (self.x - other.x).abs() + (self.y - other.y).abs()
+    }
 }
 
 /// Checks if a given point `p` lies within the bounds of a grid defined by the maximum point `p_max`.
