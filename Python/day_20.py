@@ -39,8 +39,8 @@ def get_cheat_destinations(p: Point, p_max: Point, walls, costs_dict, save_at_le
     for y in range(-max_dist, max_dist + 1):
         for x in range(-max_dist, max_dist + 1):
             n = Point(p.x + x, p.y + y)
-            if n not in walls and (manhattan_distance(p, n) <= max_dist and is_in_grid(n, p_max) and
-                                   costs_dict[n] >= costs_dict[p] + manhattan_distance(p, n) + save_at_least):
+            if (n not in walls and manhattan_distance(p, n) <= max_dist and is_in_grid(n, p_max) and
+                    costs_dict[n] >= costs_dict[p] + manhattan_distance(p, n) + save_at_least):
                 point_set.add(n)
     return point_set
 
@@ -61,17 +61,17 @@ def solve(start: Point, end: Point, walls: Set[Point], max_dist: int, save_at_le
     costs_dict, path = calc_costs(end, start, walls, p_max)
     normal_cost = costs_dict[end]
     savings = collections.defaultdict(int)
-    for p in path:
+    for p in path[:-save_at_least]:
         find_cheats(costs_dict, normal_cost, p, p_max, savings, walls, save_at_least, max_dist)
     return sum(savings.values())
 
 
 def part_1(walls: Set[Point], start: Point, end: Point) -> int:
-    return solve(start, end, walls, max_dist=2)
+    return solve(start, end, walls, max_dist=2, save_at_least=100)
 
 
 def part_2(walls: Set[Point], start: Point, end: Point) -> int:
-    return solve(start, end, walls, max_dist=20)
+    return solve(start, end, walls, max_dist=20, save_at_least=100)
 
 
 def main():
