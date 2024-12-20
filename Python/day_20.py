@@ -19,17 +19,6 @@ def parse_input(lines: List[str]) -> (Set[Point], Point, Point):
     return walls, start, end
 
 
-def get_cheat_destinations(p: Point, p_max: Point, walls, costs_dict, max_dist=2) -> Set[Point]:
-    point_set = set()
-    for y in range(-max_dist, max_dist + 1):
-        for x in range(-max_dist, max_dist + 1):
-            n = Point(p.x + x, p.y + y)
-            if n not in walls and (manhattan_distance(p, n) <= max_dist and is_in_grid(n, p_max) and
-                                   costs_dict[n] > costs_dict[p] + manhattan_distance(p, n)):
-                point_set.add(n)
-    return point_set
-
-
 def calc_costs(end: Point, start: Point, walls: Set[Point], p_max: Point) -> (Dict[Point, int], List[Point]):
     stack = [(0, start)]
     costs_dict = {}
@@ -45,15 +34,26 @@ def calc_costs(end: Point, start: Point, walls: Set[Point], p_max: Point) -> (Di
     return costs_dict, path
 
 
-def find_cheats(costs_dict: Dict[Point, int], normal_cost: int, p: Point, p_max: Point, savings: Dict[int, int],
-                walls: Set[Point], max_dist: int):
-    for n in get_cheat_destinations(p, p_max, walls, costs_dict, max_dist=max_dist):
-        savings[calc_savings(costs_dict, n, normal_cost, p)] += 1
+def get_cheat_destinations(p: Point, p_max: Point, walls, costs_dict, save_at_least, max_dist=2) -> Set[Point]:
+    point_set = set()
+    for y in range(-max_dist, max_dist + 1):
+        for x in range(-max_dist, max_dist + 1):
+            n = Point(p.x + x, p.y + y)
+            if n not in walls and (manhattan_distance(p, n) <= max_dist and is_in_grid(n, p_max) and
+                                   costs_dict[n] >= costs_dict[p] + manhattan_distance(p, n) + save_at_least):
+                point_set.add(n)
+    return point_set
 
 
 def calc_savings(costs_dict: Dict[Point, int], n: Point, normal_cost: int, p: Point) -> int:
     new_costs = costs_dict[p] + manhattan_distance(p, n) + (normal_cost - costs_dict[n])
     return normal_cost - new_costs
+
+
+def find_cheats(costs_dict: Dict[Point, int], normal_cost: int, p: Point, p_max: Point, savings: Dict[int, int],
+                walls: Set[Point], save_at_least: int, max_dist: int):
+    for n in get_cheat_destinations(p, p_max, walls, costs_dict, save_at_least=save_at_least, max_dist=max_dist):
+        savings[calc_savings(costs_dict, n, normal_cost, p)] += 1
 
 
 def solve(start: Point, end: Point, walls: Set[Point], max_dist: int, save_at_least: int = 100) -> int:
@@ -62,8 +62,8 @@ def solve(start: Point, end: Point, walls: Set[Point], max_dist: int, save_at_le
     normal_cost = costs_dict[end]
     savings = collections.defaultdict(int)
     for p in path:
-        find_cheats(costs_dict, normal_cost, p, p_max, savings, walls, max_dist)
-    return sum(v if k >= save_at_least else 0 for k, v in savings.items())
+        find_cheats(costs_dict, normal_cost, p, p_max, savings, walls, save_at_least, max_dist)
+    return sum(savings.values())
 
 
 def part_1(walls: Set[Point], start: Point, end: Point) -> int:
