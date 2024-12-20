@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use aoc::Point;
+use aoc::{get_neighbours_4, Point};
 use rayon::iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 type Walls = HashSet<Point>;
@@ -38,18 +38,6 @@ fn parse_input(input: &str) -> (Walls, Point, Point) {
     (walls, start.unwrap(), end.unwrap())
 }
 
-fn get_neighbours_4(point: &Point, p_max: &Point) -> Vec<Point> {
-    let deltas = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-    deltas
-        .iter()
-        .map(|(dx, dy)| Point {
-            x: point.x + dx,
-            y: point.y + dy,
-        })
-        .filter(|p| p.x >= 0 && p.y >= 0 && p.x <= p_max.x && p.y <= p_max.y)
-        .collect()
-}
-
 fn calc_costs(end: &Point, start: &Point, walls: &Walls, p_max: &Point) -> (Costs, Path) {
     let mut stack = vec![(0, *start)];
     let mut costs_dict = HashMap::new();
@@ -61,12 +49,12 @@ fn calc_costs(end: &Point, start: &Point, walls: &Walls, p_max: &Point) -> (Cost
             return (costs_dict, path);
         }
 
-        for n in get_neighbours_4(&point, p_max)
-            .into_iter()
+        for n in get_neighbours_4(point, *p_max)
+            .iter()
             .filter(|n| !walls.contains(n) && !costs_dict.contains_key(n))
         {
-            stack.push((cost + 1, n));
-            path.push(n);
+            stack.push((cost + 1, *n));
+            path.push(*n);
         }
     }
 
@@ -108,7 +96,6 @@ fn get_cheat_destinations(
     point_set
 }
 
-
 fn solve(start: Point, end: Point, walls: Walls, max_dist: isize, save_at_least: isize) -> usize {
     let p_max = Point {
         x: walls.iter().map(|w| w.x).max().unwrap_or(0),
@@ -116,11 +103,12 @@ fn solve(start: Point, end: Point, walls: Walls, max_dist: isize, save_at_least:
     };
 
     let (costs_dict, path) = calc_costs(&end, &start, &walls, &p_max);
-    path.par_iter().take(path.len() - save_at_least as usize).map(
-        |p|{
+    path.par_iter()
+        .take(path.len() - save_at_least as usize)
+        .map(|p| {
             get_cheat_destinations(p, &p_max, &walls, &costs_dict, save_at_least, max_dist).len()
-        }
-    ).sum()
+        })
+        .sum()
 }
 
 fn part_1(walls: Walls, start: Point, end: Point) -> usize {
