@@ -7,9 +7,9 @@ lazy_static! {
 }
 
 fn parse_input(input: &str) -> Vec<String> {
-    let parts: Vec<&str> = input.split("\n\n").collect();
-    let patterns = parts[1].lines().map(|p| p.to_string()).collect();
-    let towels: Vec<&'static str> = parts[0]
+    let (towelz, patternz) = input.split_once("\n\n").unwrap();
+    let patterns = patternz.lines().map(|p| p.to_string()).collect();
+    let towels: Vec<&'static str> = towelz
         .split(',')
         .map(|t| Box::leak(t.trim().to_string().into_boxed_str()) as &'static str) // Cast to immutable reference
         .collect();
