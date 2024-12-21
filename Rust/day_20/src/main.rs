@@ -57,7 +57,6 @@ fn calc_costs(end: &Point, start: &Point, walls: &Walls, p_max: &Point) -> (Cost
             path.push(*n);
         }
     }
-
     (costs_dict, path)
 }
 
@@ -87,7 +86,6 @@ fn get_cheat_destinations(
             }
         }
     }
-
     point_set
 }
 
