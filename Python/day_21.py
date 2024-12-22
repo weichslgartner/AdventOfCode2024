@@ -42,8 +42,8 @@ def numeric_to_directional_single_step(src: str, dst: str) -> str:
         return [res_x + res_y + "A"]
     return [res_x + res_y + "A", res_y + res_x + "A"]
 
-
-def directional_to_directional_single_step(src: str, dst: str, prev: str = "") -> str:
+@cache
+def directional_to_directional_single_step(src: str, dst: str) -> str:
     ps: Point = pad_directional[src]
     pd: Point = pad_directional[dst]
     x_d = pd.x - ps.x
@@ -56,7 +56,7 @@ def directional_to_directional_single_step(src: str, dst: str, prev: str = "") -
         return [res_y + res_x + "A"]
     if len(res_x) == 0 or len(res_y) == 0:
         return [res_x + res_y + "A"]
-    return [res_x + res_y + "A", res_y + res_x + "A"]
+    return [res_x + res_y + "A"]
 
 
 def part_1(codes):
@@ -74,18 +74,25 @@ def part_1(codes):
 def shortest(a, b):
     stack = []
     stack += numeric_to_directional_single_step(a, b)
-    for _ in range(2):
+    for i in range(26):
+        print(f"depth {i}:")
         new_stack = []
         for s in stack:
-            substack = []
-            for a1, b1 in pairwise("A" + s):
-                substack.append(directional_to_directional_single_step(a1, b1))
-            results = []
-            gen_combinations("", substack, results)
-            new_stack += results
+            substack = do_replacement(s)
+            # results = []
+           # gen_combinations("", substack, results)
+            new_stack.append(substack)
+            print(len(substack))
         stack = new_stack
     min_val = min(len(s) for s in stack)
     return min_val
+
+@cache
+def do_replacement(s):
+    substack = ""
+    for a1, b1 in pairwise("A" + s):
+        substack += directional_to_directional_single_step(a1, b1)[0]
+    return substack
 
 
 def gen_combinations(cur: str, rest: List, results: List):
