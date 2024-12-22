@@ -1,6 +1,6 @@
 import collections
 from functools import cache
-from itertools import pairwise, combinations
+from itertools import pairwise
 from typing import List
 
 from aoc import get_lines, Point
@@ -64,12 +64,16 @@ def directional_to_directional_single_step(src: str, dst: str) -> str:
 
 
 def part_1(codes):
+    return solve(codes, 2)
+
+
+def solve(codes, r):
     complexity = 0
     for code in codes:
         tmp = 0
         for a, b in pairwise("A" + code):
-            tmp += shortest(a, b)
-       # print(code, tmp)
+            tmp += shortest(a, b, r)
+        # print(code, tmp)
         complexity += int(code[:-1]) * tmp
     return complexity
 
@@ -82,22 +86,18 @@ def get_tuple_cnt(s):
 
 
 @cache
-def shortest(a, b):
+def shortest(a, b, r):
     stack = []
     stack += numeric_to_directional_single_step(a, b)
     cnts = [get_tuple_cnt(s) for s in stack]
     starts = [s[0] for s in stack]
-    for i in range(25):
-        # print(f"depth {i}:")
+    for i in range(r):
         new_stack = []
         new_cnts = []
         new_starts = []
         for i, s in enumerate(cnts):
-            #  substack = do_replacement(s)
             new_cnt = collections.defaultdict(int)
-
             res = directional_to_directional_single_step("A", starts[i])[0]
-
 
             for a, b in pairwise(res):
                 new_cnt[(a, b)] += 1
@@ -107,19 +107,10 @@ def shortest(a, b):
                 new_cnt[("A", res[0])] += v
                 for a, b in pairwise(res):
                     new_cnt[(a, b)] += v
-            # results = []
-            # gen_combinations("", substack, results)
-            # new_stack.append(substack)
             new_cnts.append(new_cnt)
-            # debug = get_tuple_cnt(substack)
-            # print(len(substack),sum(v for v in new_cnt.values()),sum(v for v in debug.values()))
-            #print(sum(v for v in new_cnt.values()) + 1)
-        stack = new_stack
+
         cnts = new_cnts
         starts = new_starts
-    # (sum(v for v in cnt.values()) + 1 for cnt in cnts)
-    #print(len(new_cnts))
-    # min_val = min(len(s) for s in stack)
     return min((sum(v for v in cnt.values()) + 1) for cnt in new_cnts)
 
 
@@ -145,26 +136,18 @@ def generate_shortest_num_dir(code):
     res = ""
     for a, b in pairwise("A" + code):
         res += numeric_to_directional_single_step(a, b)[0]
-    #print(res)
     return res
 
 
-def part_2(lines):
-    pass
+def part_2(codes):
+    return solve(codes, 25)
 
 
 def main():
     lines = get_lines("input_21.txt")
     codes = parse_input(lines)
-    # shortest("3","7")
-    # example part2 154115708116294
-    print(pad_directional.keys())
-    for a,b in combinations(pad_directional.keys(),r=2):
-        print(a,b,directional_to_directional_single_step(a,b))
-    #directional_to_directional_single_step
-    print("Part 1:", part_1(codes))  # too high 157942
-    print("Part 2:", part_2(codes))  # too high 215929898128098
-    # to low 86261890651796
+    print("Part 1:", part_1(codes))
+    print("Part 2:", part_2(codes))
 
 
 if __name__ == '__main__':
