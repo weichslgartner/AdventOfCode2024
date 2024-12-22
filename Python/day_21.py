@@ -1,8 +1,9 @@
+import collections
 from functools import cache
+from itertools import pairwise
 from typing import List
 
 from aoc import get_lines, Point
-from itertools import pairwise
 
 pad_numeric = None
 pad_directional = None
@@ -42,6 +43,7 @@ def numeric_to_directional_single_step(src: str, dst: str) -> str:
         return [res_x + res_y + "A"]
     return [res_x + res_y + "A", res_y + res_x + "A"]
 
+
 @cache
 def directional_to_directional_single_step(src: str, dst: str) -> str:
     ps: Point = pad_directional[src]
@@ -56,7 +58,9 @@ def directional_to_directional_single_step(src: str, dst: str) -> str:
         return [res_y + res_x + "A"]
     if len(res_x) == 0 or len(res_y) == 0:
         return [res_x + res_y + "A"]
-    return [res_x + res_y + "A"]
+    if src == "A":
+        return [res_x + res_y + "A"]
+    return [res_y + res_x + "A"]
 
 
 def part_1(codes):
@@ -70,22 +74,54 @@ def part_1(codes):
     return complexity
 
 
+def get_tuple_cnt(s):
+    cnt = collections.defaultdict(int)
+    for a1, b1 in pairwise(s):
+        cnt[(a1, b1)] += 1
+    return cnt
+
+
 @cache
 def shortest(a, b):
     stack = []
     stack += numeric_to_directional_single_step(a, b)
-    for i in range(26):
-        print(f"depth {i}:")
+    cnts = [get_tuple_cnt(s) for s in stack]
+    starts = [s[0] for s in stack]
+    for i in range(25):
+        # print(f"depth {i}:")
         new_stack = []
-        for s in stack:
-            substack = do_replacement(s)
+        new_cnts = []
+        new_starts = []
+        for i, s in enumerate(cnts):
+            #  substack = do_replacement(s)
+            new_cnt = collections.defaultdict(int)
+
+            res = directional_to_directional_single_step("A", starts[i])[0]
+
+
+            for a, b in pairwise(res):
+                new_cnt[(a, b)] += 1
+            new_starts.append(res[0])
+            for k, v in cnts[i].items():
+                res = directional_to_directional_single_step(k[0], k[1])[0]
+                new_cnt[("A", res[0])] += v
+                for a, b in pairwise(res):
+                    new_cnt[(a, b)] += v
             # results = []
-           # gen_combinations("", substack, results)
-            new_stack.append(substack)
-            print(len(substack))
+            # gen_combinations("", substack, results)
+            # new_stack.append(substack)
+            new_cnts.append(new_cnt)
+            # debug = get_tuple_cnt(substack)
+            # print(len(substack),sum(v for v in new_cnt.values()),sum(v for v in debug.values()))
+            print(sum(v for v in new_cnt.values()) + 1)
         stack = new_stack
-    min_val = min(len(s) for s in stack)
-    return min_val
+        cnts = new_cnts
+        starts = new_starts
+    # (sum(v for v in cnt.values()) + 1 for cnt in cnts)
+    print(len(new_cnts))
+    # min_val = min(len(s) for s in stack)
+    return min((sum(v for v in cnt.values()) + 1) for cnt in new_cnts)
+
 
 @cache
 def do_replacement(s):
@@ -118,12 +154,13 @@ def part_2(lines):
 
 
 def main():
-    lines = get_lines("input_21.txt")
+    lines = get_lines("input_21_test.txt")
     codes = parse_input(lines)
     # shortest("3","7")
-
+    # example part2 154115708116294
     print("Part 1:", part_1(codes))  # too high 157942
-    print("Part 2:", part_2(codes))
+    print("Part 2:", part_2(codes))  # too high 215929898128098
+    # to low 86261890651796
 
 
 if __name__ == '__main__':
