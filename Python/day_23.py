@@ -1,9 +1,10 @@
 import collections
+from typing import Dict, List, Set
 
 from aoc import get_lines
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> Dict[str, List[str]]:
     connections = collections.defaultdict(list)
     for line in lines:
         src, dst = line.split("-", maxsplit=1)
@@ -12,12 +13,7 @@ def parse_input(lines):
     return connections
 
 
-def part_1(three_way):
-    return len(list(filter(lambda node: any(node.startswith('t') for node in node.split(","))
-                           , three_way)))
-
-
-def get_three_way_cliques(connections):
+def get_three_way_cliques(connections: Dict[str, List[str]]) -> Set[str]:
     three_way = set()
     for src, dsts in connections.items():
         for d in dsts:
@@ -28,14 +24,19 @@ def get_three_way_cliques(connections):
     return three_way
 
 
-def can_add(group, candidate, connections):
+def can_add(group: List[str], candidate: str, connections: Dict[str, List[str]]) -> bool:
     for g in group:
         if candidate not in connections[g]:
             return False
     return True
 
 
-def part_2(three_way, connections):
+def part_1(three_way: Set[str]) -> int:
+    return len(list(filter(lambda node: any(node.startswith('t') for node in node.split(",")),
+                           three_way)))
+
+
+def part_2(three_way: Set[str], connections: Dict[str, List[str]]) -> str:
     biggest_group = []
     for group_str in three_way:
         group = group_str.split(",")
