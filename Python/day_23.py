@@ -40,9 +40,9 @@ def part_2(three_way: Set[str], connections: Dict[str, List[str]]) -> str:
     biggest_group = []
     for group_str in three_way:
         group = group_str.split(",")
-        for g in connections[group[0]]:
-            if can_add(group[1:], g, connections):
-                group.append(g)
+        for candidate in filter(lambda x: x not in group, connections[group[0]]):
+            if can_add(group[1:], candidate, connections):
+                group.append(candidate)
             if len(group) > len(biggest_group):
                 biggest_group = group.copy()
     return ','.join(sorted(biggest_group))

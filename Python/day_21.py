@@ -1,7 +1,6 @@
 import collections
 from functools import cache
 from itertools import pairwise
-from typing import List
 
 from aoc import get_lines, Point
 
@@ -41,7 +40,9 @@ def numeric_to_directional_single_step(src: str, dst: str) -> str:
         return [res_x + res_y + "A"]
     if len(res_x) == 0 or len(res_y) == 0:
         return [res_x + res_y + "A"]
-    return [res_x + res_y + "A", res_y + res_x + "A"]
+    if src in "963A" or (src in "852" and dst in "741"):
+        return [res_x + res_y + "A"]
+    return [res_y + res_x + "A"]
 
 
 @cache
@@ -63,21 +64,6 @@ def directional_to_directional_single_step(src: str, dst: str) -> str:
     return [res_y + res_x + "A"]
 
 
-def part_1(codes):
-    return solve(codes, 2)
-
-
-def solve(codes, r):
-    complexity = 0
-    for code in codes:
-        tmp = 0
-        for a, b in pairwise("A" + code):
-            tmp += shortest(a, b, r)
-        # print(code, tmp)
-        complexity += int(code[:-1]) * tmp
-    return complexity
-
-
 def get_tuple_cnt(s):
     cnt = collections.defaultdict(int)
     for a1, b1 in pairwise(s):
@@ -92,7 +78,6 @@ def shortest(a, b, r):
     cnts = [get_tuple_cnt(s) for s in stack]
     starts = [s[0] for s in stack]
     for i in range(r):
-        new_stack = []
         new_cnts = []
         new_starts = []
         for i, s in enumerate(cnts):
@@ -114,29 +99,19 @@ def shortest(a, b, r):
     return min((sum(v for v in cnt.values()) + 1) for cnt in new_cnts)
 
 
-@cache
-def do_replacement(s):
-    substack = ""
-    for a1, b1 in pairwise("A" + s):
-        substack += directional_to_directional_single_step(a1, b1)[0]
-    return substack
+def solve(codes, r):
+    complexity = 0
+    for code in codes:
+        tmp = 0
+        for a, b in pairwise("A" + code):
+            tmp += shortest(a, b, r)
+        # print(code, tmp)
+        complexity += int(code[:-1]) * tmp
+    return complexity
 
 
-def gen_combinations(cur: str, rest: List, results: List):
-    if len(rest) == 0:
-        results.append(cur)
-        return
-    choices = rest[0]
-    new_rest = rest[1:]
-    for c in choices:
-        gen_combinations(cur + c, new_rest, results)
-
-
-def generate_shortest_num_dir(code):
-    res = ""
-    for a, b in pairwise("A" + code):
-        res += numeric_to_directional_single_step(a, b)[0]
-    return res
+def part_1(codes):
+    return solve(codes, 2)
 
 
 def part_2(codes):
