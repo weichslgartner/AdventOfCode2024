@@ -35,14 +35,14 @@ def numeric_to_directional_single_step(src: str, dst: str) -> str:
     res_x = "<" * abs(x_d) if x_d < 0 else ">" * x_d
     res_y = "^" * abs(y_d) if y_d < 0 else "v" * y_d
     if src in "0A" and dst in "741":
-        return [res_y + res_x + "A"]
+        return res_y + res_x + "A"
     if dst in "0A" and src in "741":
-        return [res_x + res_y + "A"]
+        return res_x + res_y + "A"
     if len(res_x) == 0 or len(res_y) == 0:
-        return [res_x + res_y + "A"]
+        return res_x + res_y + "A"
     if src in "963A" or (src in "852" and dst in "741"):
-        return [res_x + res_y + "A"]
-    return [res_y + res_x + "A"]
+        return res_x + res_y + "A"
+    return res_y + res_x + "A"
 
 
 @cache
@@ -54,14 +54,14 @@ def directional_to_directional_single_step(src: str, dst: str) -> str:
     res_x = "<" * abs(x_d) if x_d < 0 else ">" * x_d
     res_y = "^" * abs(y_d) if y_d < 0 else "v" * y_d
     if src == "<" and dst in "^A":
-        return [res_x + res_y + "A"]
+        return res_x + res_y + "A"
     if dst == "<" and src in "^A":
-        return [res_y + res_x + "A"]
+        return res_y + res_x + "A"
     if len(res_x) == 0 or len(res_y) == 0:
-        return [res_x + res_y + "A"]
+        return res_x + res_y + "A"
     if src in "A>":
-        return [res_x + res_y + "A"]
-    return [res_y + res_x + "A"]
+        return res_x + res_y + "A"
+    return res_y + res_x + "A"
 
 
 def get_tuple_cnt(s):
@@ -73,30 +73,23 @@ def get_tuple_cnt(s):
 
 @cache
 def shortest(a, b, r):
-    stack = []
-    stack += numeric_to_directional_single_step(a, b)
-    cnts = [get_tuple_cnt(s) for s in stack]
-    starts = [s[0] for s in stack]
+    stack = numeric_to_directional_single_step(a, b)
+    cnts = get_tuple_cnt(stack)
+    starts = stack[0]
     for i in range(r):
-        new_cnts = []
-        new_starts = []
-        for i, s in enumerate(cnts):
-            new_cnt = collections.defaultdict(int)
-            res = directional_to_directional_single_step("A", starts[i])[0]
-
+        new_cnts = collections.defaultdict(int)
+        res = directional_to_directional_single_step("A", starts)
+        for a, b in pairwise(res):
+            new_cnts[(a, b)] += 1
+        new_starts = res[0]
+        for k, v in cnts.items():
+            res = directional_to_directional_single_step(k[0], k[1])
+            new_cnts[("A", res[0])] += v
             for a, b in pairwise(res):
-                new_cnt[(a, b)] += 1
-            new_starts.append(res[0])
-            for k, v in cnts[i].items():
-                res = directional_to_directional_single_step(k[0], k[1])[0]
-                new_cnt[("A", res[0])] += v
-                for a, b in pairwise(res):
-                    new_cnt[(a, b)] += v
-            new_cnts.append(new_cnt)
-
+                new_cnts[(a, b)] += v
         cnts = new_cnts
         starts = new_starts
-    return min((sum(v for v in cnt.values()) + 1) for cnt in new_cnts)
+    return sum(v for v in new_cnts.values()) + 1
 
 
 def solve(codes, r):
