@@ -1,5 +1,5 @@
 import collections
-from functools import cache
+from functools import cache, reduce
 from itertools import pairwise
 
 from aoc import get_lines, Point
@@ -65,42 +65,31 @@ def directional_to_directional_single_step(src: str, dst: str) -> str:
 
 
 def get_tuple_cnt(s):
-    cnt = collections.defaultdict(int)
-    for a1, b1 in pairwise(s):
-        cnt[(a1, b1)] += 1
-    return cnt
+    return reduce(lambda cnt, ab: cnt.update({ab: cnt[ab] + 1}) or cnt, pairwise(s), collections.defaultdict(int))
 
 
 @cache
 def shortest(a, b, r):
     stack = numeric_to_directional_single_step(a, b)
     cnts = get_tuple_cnt(stack)
-    starts = stack[0]
+    start = stack[0]
     for i in range(r):
         new_cnts = collections.defaultdict(int)
-        res = directional_to_directional_single_step("A", starts)
+        res = directional_to_directional_single_step("A", start)
         for a, b in pairwise(res):
             new_cnts[(a, b)] += 1
-        new_starts = res[0]
+        start = res[0]
         for k, v in cnts.items():
             res = directional_to_directional_single_step(k[0], k[1])
             new_cnts[("A", res[0])] += v
             for a, b in pairwise(res):
                 new_cnts[(a, b)] += v
         cnts = new_cnts
-        starts = new_starts
     return sum(v for v in new_cnts.values()) + 1
 
 
 def solve(codes, r):
-    complexity = 0
-    for code in codes:
-        tmp = 0
-        for a, b in pairwise("A" + code):
-            tmp += shortest(a, b, r)
-        # print(code, tmp)
-        complexity += int(code[:-1]) * tmp
-    return complexity
+    return sum(int(code[:-1]) * sum(shortest(a, b, r) for a, b in pairwise("A" + code)) for code in codes)
 
 
 def part_1(codes):
