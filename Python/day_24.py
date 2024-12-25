@@ -27,9 +27,10 @@ def parse_input(input_str):
         gates.append(g)
         gates_dict[g.in1].append(g)
         gates_dict[g.in2].append(g)
-
     return wires, gates, gates_dict
 
+def is_correct_adder(output,carry_in):
+    return True
 
 def calculate(g: Gate, in1, in2):
     match g.operator:
